@@ -6,5 +6,6 @@ namespace MultiAtendimento.API.Models
     {
         [Key]
         public int Id { get; set; }
+        public Empresa Empresa { get; set; }
     }
 }

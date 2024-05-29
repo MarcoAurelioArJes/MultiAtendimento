@@ -1,10 +1,10 @@
 ﻿using MultiAtendimento.API.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using MultiAtendimento.API.Repositorio;
+using MultiAtendimento.API.Repository;
 using MultiAtendimento.API.Models.DTOs;
 using MultiAtendimento.API.Models.Enums;
-using MultiAtendimento.API.Repositorio.BancoDeDados;
+using MultiAtendimento.API.Repository.BancoDeDados;
 
 namespace MultiAtendimento.API.Hubs
 {

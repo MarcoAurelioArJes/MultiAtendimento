@@ -1,7 +1,7 @@
 ﻿using MultiAtendimento.API.Models;
 using System.Collections.Concurrent;
 
-namespace MultiAtendimento.API.Repositorio
+namespace MultiAtendimento.API.Repository
 {
     public class ListaDeChatsTemporaria
     {

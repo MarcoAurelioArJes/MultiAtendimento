@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MultiAtendimento.API.Repositorio.BancoDeDados;
+using MultiAtendimento.API.Repository.BancoDeDados;
 
 #nullable disable
 

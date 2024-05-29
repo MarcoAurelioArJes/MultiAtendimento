@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MultiAtendimento.API.Models;
 
-namespace MultiAtendimento.API.Repositorio.BancoDeDados
+namespace MultiAtendimento.API.Repository.BancoDeDados
 {
     public class ContextoDoBancoDeDados : DbContext
     {
