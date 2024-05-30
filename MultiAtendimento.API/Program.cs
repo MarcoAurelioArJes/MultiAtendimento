@@ -17,9 +17,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ListaDeChatsTemporaria>();
 
 builder.Services.AddScoped<ISetorRepository, SetorRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<SetorService>();
+builder.Services.AddScoped<UsuarioService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
