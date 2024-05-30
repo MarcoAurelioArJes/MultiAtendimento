@@ -33,7 +33,9 @@ namespace MultiAtendimento.API.Repository
 
         public T ObterPorId(int id)
         {
-            return _dbSet.FirstOrDefault(c => c.Id == id);
+            return _dbSet
+                        .Include(c => c.Empresa)
+                        .FirstOrDefault(c => c.Id == id);
         }
 
         public List<T> ObterTodosPorCnpjDaEmpresa(string cnpjDaEmpresa)

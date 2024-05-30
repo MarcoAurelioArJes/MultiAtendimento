@@ -3,7 +3,6 @@
     public class Cliente : BaseModel
     {
         public string Nome { get; set; }
-        public Setor Setor { get; set; }
-        public DateTime DataCadastro { get; set; }
+        public Setor Setor { get; set; } = new Setor();
     }
 }

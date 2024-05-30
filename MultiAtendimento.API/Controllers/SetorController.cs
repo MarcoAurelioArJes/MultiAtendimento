@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using MultiAtendimento.API.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using MultiAtendimento.API.Services;
 using MultiAtendimento.API.Models.DTOs;
-using MultiAtendimento.API.Models.Interfaces;
 
 namespace MultiAtendimento.API.Controllers
 {
@@ -10,12 +8,10 @@ namespace MultiAtendimento.API.Controllers
     [Route("[controller]")]
     public class SetorController : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly ISetorRepository _setorRepository;
-        public SetorController(IMapper mapper, ISetorRepository setorRepository)
+        private readonly SetorService _setorService;
+        public SetorController(SetorService setorService)
         {
-            _mapper = mapper;
-            _setorRepository = setorRepository;
+            _setorService = setorService;
         }
 
         [HttpPost("criar")]
@@ -23,9 +19,40 @@ namespace MultiAtendimento.API.Controllers
         {
             try
             {
-                var setor = _mapper.Map<Setor>(setorInput);
-                _setorRepository.Criar(setor);
+                _setorService.Criar(setorInput);
                 return Created();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("atualizar/{id}")]
+        public IActionResult Atualizar(string id, [FromBody] SetorInput setorInput)
+        {
+            try
+            {
+                var idInteiro = int.TryParse(id, out int resultado) ? resultado
+                                                                    : throw new ArgumentException("Necessário informar no parâmetro da URL um número", "id");
+                _setorService.Atualizar(idInteiro, setorInput);
+                return Created();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //TO DO
+        //REMOVER O PARAMETRO cnpjEmpresa e utilizar a partir das CLAIMS quando for autenticado
+        [HttpGet("setores")]
+        public IActionResult Setores(string cnpjEmpresa)
+        {
+            try
+            {
+                var setores = _setorService.ObterTodosOsSetoresPorEmpresa(cnpjEmpresa);
+                return Ok(setores);
             }
             catch (Exception ex)
             {

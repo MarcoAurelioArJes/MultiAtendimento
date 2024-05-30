@@ -4,10 +4,10 @@ namespace MultiAtendimento.API.Models
 {
     public class Chat : BaseModel
     {
-        public Guid ChatId { get; set; } = Guid.NewGuid();
-        public Usuario? Atendente { get; set; }
-        public Setor Setor { get; set; }
+        public Guid ChatId { get; } = Guid.NewGuid();
+        public Usuario? Atendente { get; set; } = new Usuario();
+        public Setor Setor { get; set; } = new Setor();
         public StatusDoChatEnum Status { get; set; }
-        public Cliente Cliente { get; set; }
+        public Cliente Cliente { get; set; } = new Cliente();
     }
 }

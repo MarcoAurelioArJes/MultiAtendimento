@@ -9,6 +9,8 @@ namespace MultiAtendimento.API.Services
         public MapperService() 
         {
             CreateMap<SetorInput, Setor>();
+
+            CreateMap<ClienteInput, Cliente>();
         }
     }
 }

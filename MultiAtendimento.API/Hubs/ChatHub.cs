@@ -5,72 +5,48 @@ using MultiAtendimento.API.Repository;
 using MultiAtendimento.API.Models.DTOs;
 using MultiAtendimento.API.Models.Enums;
 using MultiAtendimento.API.Repository.BancoDeDados;
+using MultiAtendimento.API.Models.Interfaces;
+using MultiAtendimento.API.Services;
+using System;
 
 namespace MultiAtendimento.API.Hubs
 {
     public class ChatHub : Hub
     {
         private readonly ListaDeChatsTemporaria _listaDeChatsTemporaria;
-        private readonly ContextoDoBancoDeDados _contextoDoBancoDeDados;
+        private readonly ClienteService _clienteService;
+        private readonly ChatService _chatService;
 
-        public ChatHub(ListaDeChatsTemporaria listaDeChatsTemporaria, ContextoDoBancoDeDados contextoDoBancoDeDados)
+        public ChatHub(ListaDeChatsTemporaria listaDeChatsTemporaria, ClienteService clienteService, ChatService chatService)
         {
             _listaDeChatsTemporaria = listaDeChatsTemporaria;
-            _contextoDoBancoDeDados = contextoDoBancoDeDados;
-        }
-
-        public async Task VincularAUmSetor(SetorInput setor)
-        {
-            var chats = _contextoDoBancoDeDados.Chats
-                                               .Include(c => c.Setor)
-                                               .Where(c => c.Status == StatusDoChatEnum.Nenhum
-                                                        && c.Setor.Nome.ToLower().Equals(setor.Nome.ToLower())
-                                                        && c.Setor.Empresa.Cnpj.Equals(setor.CnpjEmpresa));
-
-            await Clients.Caller.SendAsync("VinculadoAoChat", chats);
-            await Groups.AddToGroupAsync(Context.ConnectionId, $"{setor.CnpjEmpresa}_{setor.Nome}");
+            _clienteService = clienteService;
+            _chatService = chatService;
         }
 
         public async Task IniciarChat(ClienteInput clienteInput)
         {
-            var setor = _contextoDoBancoDeDados.Setores
-                                   .Include(c => c.Empresa)
-                                   .FirstOrDefault(c => c.Id == clienteInput.SetorId 
-                                                     && c.Empresa.Cnpj.Equals(clienteInput.CnpjEmpresa));
-            
-            var cliente = new Cliente
-            {
-                Nome = clienteInput.Nome,
-                Empresa = setor.Empresa,
-                Setor = setor,
-                DataCadastro = DateTime.Now
-            };
+            var clienteCriado = _clienteService.Criar(clienteInput);
 
-            _contextoDoBancoDeDados.Clientes.Add(cliente);
-            _contextoDoBancoDeDados.SaveChanges();
-
-            var clienteDb = _contextoDoBancoDeDados.Clientes
-                                                   .Include(c => c.Empresa)
-                                                   .Include(c => c.Setor)
-                                                   .FirstOrDefault(c => c.DataCadastro.Equals(cliente.DataCadastro));
-
-            var chat = new Chat
-            {
-                Atendente = null,
-                Setor = setor,
-                Cliente = clienteDb,
-                Status = StatusDoChatEnum.Nenhum,
-                Empresa = clienteDb.Empresa
-            };
-
-            _contextoDoBancoDeDados.Chats.Add(chat);
-            _contextoDoBancoDeDados.SaveChanges();
+            var chat = _chatService.Criar(clienteCriado);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, chat.ChatId.ToString());
 
             _listaDeChatsTemporaria.Chats[Context.ConnectionId] = chat;
 
-            await Clients.Group(chat.Setor.Nome).SendAsync("ChatCriado", chat);
+            await Clients.Group($"{chat.Setor.Empresa.Cnpj}_{chat.Setor.Nome}").SendAsync("ChatCriado", chat);
+        }
+
+        public async Task VincularAUmGrupoDeChats(SetorInput setor)
+        {
+            //var chats = _contextoDoBancoDeDados.Chats
+            //                                   .Include(c => c.Setor)
+            //                                   .Where(c => c.Status == StatusDoChatEnum.Nenhum
+            //                                            && c.Setor.Nome.ToLower().Equals(setor.Nome.ToLower())
+            //                                            && c.Setor.Empresa.Cnpj.Equals(setor.CnpjEmpresa));
+
+            //await Clients.Caller.SendAsync("VinculadoAoChat", chats);
+            //await Groups.AddToGroupAsync(Context.ConnectionId, $"{chat.Setor.Empresa.Cnpj}_{chat.Setor.Nome}");
         }
     }
 }

@@ -1,6 +1,7 @@
 using MultiAtendimento.API.Models.Interfaces;
 using MultiAtendimento.API.Repository;
 using MultiAtendimento.API.Repository.BancoDeDados;
+using MultiAtendimento.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<ListaDeChatsTemporaria>();
+
 builder.Services.AddScoped<ISetorRepository, SetorRepository>();
+builder.Services.AddScoped<ClienteService>();
+builder.Services.AddScoped<ChatService>();
+builder.Services.AddScoped<SetorService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
