@@ -2,5 +2,6 @@
 {
     public class EnviarMensagemInput
     {
+        public string Conteudo { get; set; }
     }
 }

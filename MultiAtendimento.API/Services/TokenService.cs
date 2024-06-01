@@ -13,10 +13,6 @@ namespace MultiAtendimento.API.Services
 
         public static EntrarView ObterInformacoesDoLogin(Usuario usuario)
         {
-            var chaveSimetrica = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(PrivateKey));
-
-            var credenciais = new SigningCredentials(chaveSimetrica, SecurityAlgorithms.HmacSha256Signature);
-
             var claims = new Claim[]
             {
                 new Claim("id", usuario.Id.ToString()),
@@ -24,12 +20,8 @@ namespace MultiAtendimento.API.Services
                 new Claim("empresaCnpj", usuario.EmpresaCnpj.ToString()),
                 new Claim(ClaimTypes.Role, usuario.Cargo.ToString()),
             };
-
-            var jwtToken = new JwtSecurityToken(
-                expires: DateTime.Now.AddHours(10),
-                claims: claims,
-                signingCredentials: credenciais
-            );
+            
+            JwtSecurityToken jwtToken = ObterJwtSecurityToken(claims);
 
             var jwtHandler = new JwtSecurityTokenHandler();
 
@@ -41,6 +33,35 @@ namespace MultiAtendimento.API.Services
             };
 
             return entrarView;
+        }
+
+        private static JwtSecurityToken ObterJwtSecurityToken(Claim[]? claims)
+        {
+            var chaveSimetrica = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(PrivateKey));
+
+            var credenciais = new SigningCredentials(chaveSimetrica, SecurityAlgorithms.HmacSha256Signature);
+
+            var jwtToken = new JwtSecurityToken(
+                expires: DateTime.Now.AddHours(10),
+                claims: claims,
+                signingCredentials: credenciais
+            );
+            return jwtToken;
+        }
+
+        public static string ObterTokenDoClientePorChat(Chat chat)
+        {
+            var claims = new Claim[]
+            {
+                new Claim("chatId", chat.ChatId.ToString()),
+                new Claim("clienteId", chat.ClienteId.ToString()),
+                new Claim("empresaCnpj", chat.EmpresaCnpj)
+            };
+
+            JwtSecurityToken jwtToken = ObterJwtSecurityToken(claims);
+
+            var jwtHandler = new JwtSecurityTokenHandler();
+            return jwtHandler.WriteToken(jwtToken);
         }
     }
 }

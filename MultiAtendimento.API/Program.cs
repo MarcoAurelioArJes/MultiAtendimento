@@ -30,6 +30,7 @@ builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
 builder.Services.AddScoped<ISetorRepository, SetorRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IMensagemRepository, MensagemRepository>();
 
 
 builder.Services.AddScoped<ChatService>();
