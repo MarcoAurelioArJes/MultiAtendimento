@@ -14,7 +14,8 @@ namespace MultiAtendimento.API.Repository
 
         public Usuario ObterPorEmail(string email)
         {
-            return _dbSet.Where(u => u.Email == email).FirstOrDefault();
+            return _dbSet
+                        .Where(u => u.Email == email).FirstOrDefault();
         }
     }
 }

@@ -9,6 +9,7 @@ namespace MultiAtendimento.API.Repository
     {
         protected readonly ContextoDoBancoDeDados _contextoDoBancoDeDados;
         protected readonly DbSet<T> _dbSet;
+
         public BaseRepository(ContextoDoBancoDeDados contextoDoBancoDeDados)
         {
             _contextoDoBancoDeDados = contextoDoBancoDeDados;

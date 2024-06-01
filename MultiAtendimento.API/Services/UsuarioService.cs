@@ -11,25 +11,30 @@ namespace MultiAtendimento.API.Services
     {
         private readonly IMapper _mapper;
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IEmpresaRepository _empresaRepository;
         private readonly SetorService _setorService;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public UsuarioService(IMapper mapper, IUsuarioRepository usuarioRepository, SetorService setorService)
+        public UsuarioService(IMapper mapper, IUsuarioRepository usuarioRepository, IEmpresaRepository empresaRepository, SetorService setorService, IHttpContextAccessor httpContext)
         {
             _mapper = mapper;
             _usuarioRepository = usuarioRepository;
+            _empresaRepository = empresaRepository;
             _setorService = setorService;
+            _httpContext = httpContext;
         }
 
         public void Criar(UsuarioInput usuarioInput)
         {
             var usuario = _mapper.Map<Usuario>(usuarioInput);
-            if (usuarioInput.Setor.HasValue)
-            {
-                var setor = _setorService.ObterPorId(usuarioInput.Setor.Value);
-                usuario.Setor = setor;
-            }
-            //TO DO: Buscar e inserir empresa pela autentificação?
-
+            
+            var cnpjEmpresa = _httpContext.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "empresaCnpj")?.Value;
+            usuario.EmpresaCnpj = _empresaRepository.ObterEmpresaPorCnpj(cnpjEmpresa).Cnpj;
+            
+            var setor = _setorService.ObterPorId(usuarioInput.SetorId);
+            usuario.SetorId = setor.Id;
+            
+            usuario.Senha = HashDeSenhaService.ObterSenhaHash(usuarioInput.Senha);
             _usuarioRepository.Criar(usuario);
         }
 
@@ -40,11 +45,8 @@ namespace MultiAtendimento.API.Services
                 throw new BadHttpRequestException($"Usuário com ID {id} não encontrado", (int)HttpStatusCode.NotFound);
 
             var usuarioNovo = _mapper.Map<Usuario>(usuarioInput);
-            if (usuarioInput.Setor.HasValue)
-            {
-                var setor = _setorService.ObterPorId(usuarioInput.Setor.Value);
-                usuarioNovo.Setor = setor;
-            }
+            var setor = _setorService.ObterPorId(usuarioInput.SetorId);
+            usuarioNovo.SetorId = setor.Id;
 
             _usuarioRepository.Atualizar(usuarioNovo);
         }
@@ -67,9 +69,16 @@ namespace MultiAtendimento.API.Services
 
         public List<Usuario> ObterTodosOsUsuariosPorCnpjDaEmpresa(string cnpj)
         {
-            //TO DO: Conferir se cnpj existe antes? 
             return _usuarioRepository.ObterTodosPorCnpjDaEmpresa(cnpj);
         }
 
+        public EntrarView Entrar(EntrarInput entrarInput)
+        {
+            var usuario = _usuarioRepository.ObterPorEmail(entrarInput.Email);
+            if (usuario != null && HashDeSenhaService.ObterSeASenhaEhValida(entrarInput.Senha, usuario.Senha))
+                return TokenService.ObterInformacoesDoLogin(usuario);
+
+            throw new BadHttpRequestException("As credenciais de acesso do usuário são inválidas", StatusCodes.Status401Unauthorized);
+        }
     }
 }

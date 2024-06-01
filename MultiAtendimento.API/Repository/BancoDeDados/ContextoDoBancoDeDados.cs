@@ -25,7 +25,6 @@ namespace MultiAtendimento.API.Repository.BancoDeDados
 
         public DbSet<Empresa> Empresas { get; set; }
         public DbSet<Setor> Setores { get; set; }
-        public DbSet<Cargo> Cargos { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Chat> Chats { get; set; }

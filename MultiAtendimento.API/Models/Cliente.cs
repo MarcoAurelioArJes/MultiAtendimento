@@ -1,8 +1,16 @@
-﻿namespace MultiAtendimento.API.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MultiAtendimento.API.Models
 {
     public class Cliente : BaseModel
     {
         public string Nome { get; set; }
-        public Setor Setor { get; set; } = new Setor();
+
+        [ForeignKey(nameof(Setor))]
+        public int SetorId { get; set; }
+        [ForeignKey(nameof(Empresa))]
+        public string EmpresaCnpj { get; set; }
+
+        public Setor Setor { get; set; }
     }
 }

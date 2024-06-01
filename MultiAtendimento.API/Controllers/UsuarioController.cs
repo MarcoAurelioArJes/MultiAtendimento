@@ -1,15 +1,14 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MultiAtendimento.API.Models;
-using MultiAtendimento.API.Models.DTOs;
-using MultiAtendimento.API.Models.Interfaces;
 using MultiAtendimento.API.Services;
+using MultiAtendimento.API.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MultiAtendimento.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Roles = "ADMIN")]
     public class UsuarioController : ControllerBase
     {
         private readonly UsuarioService _usuarioService;
@@ -29,6 +28,21 @@ namespace MultiAtendimento.API.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("Entrar")]
+        public IActionResult Entrar([FromBody] EntrarInput entrarInput)
+        {
+            try
+            {
+                var retorno = _usuarioService.Entrar(entrarInput);
+                return Ok(retorno);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensagemDeErro = ex.Message });
             }
         }
 

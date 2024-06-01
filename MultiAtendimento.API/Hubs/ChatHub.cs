@@ -1,13 +1,8 @@
-﻿using MultiAtendimento.API.Models;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
+using MultiAtendimento.API.Services;
 using MultiAtendimento.API.Repository;
 using MultiAtendimento.API.Models.DTOs;
-using MultiAtendimento.API.Models.Enums;
-using MultiAtendimento.API.Repository.BancoDeDados;
-using MultiAtendimento.API.Models.Interfaces;
-using MultiAtendimento.API.Services;
-using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MultiAtendimento.API.Hubs
 {
@@ -24,21 +19,35 @@ namespace MultiAtendimento.API.Hubs
             _chatService = chatService;
         }
 
+        [Authorize]
         public async Task IniciarChat(ClienteInput clienteInput)
         {
-            var clienteCriado = _clienteService.Criar(clienteInput);
+            try
+            {
+                var clienteCriado = _clienteService.Criar(clienteInput);
 
-            var chat = _chatService.Criar(clienteCriado);
+                var chat = _chatService.Criar(clienteCriado);
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, chat.ChatId.ToString());
+                await Groups.AddToGroupAsync(Context.ConnectionId, chat.ChatId.ToString());
 
-            _listaDeChatsTemporaria.Chats[Context.ConnectionId] = chat;
+                _listaDeChatsTemporaria.Chats[Context.ConnectionId] = chat;
 
-            await Clients.Group($"{chat.Setor.Empresa.Cnpj}_{chat.Setor.Nome}").SendAsync("ChatCriado", chat);
+                await Clients.Group($"{chat.Setor.Empresa.Cnpj}_{chat.Setor.Nome}").SendAsync("ChatCriado", chat);
+            }
+            catch (Exception ex)
+            {
+                await Clients.Caller.SendAsync("EventoDeErro", "Erro ao iniciar o chat tente novamente");
+            }
+        }
+
+        public async Task EnviarMensagem()
+        {
+
         }
 
         public async Task VincularAUmGrupoDeChats(SetorInput setor)
         {
+            //Context.User.Claims.
             //var chats = _contextoDoBancoDeDados.Chats
             //                                   .Include(c => c.Setor)
             //                                   .Where(c => c.Status == StatusDoChatEnum.Nenhum
