@@ -1,4 +1,4 @@
-// File: C:\Users\marco\Videos\reactapp\multicanal\src\app\layout.js
+// File: /home/cauaic/Documents/Projeto_Oficial/MultiAtendimento/MultiAtendimento.API/wwwroot/multicanal/src/app/layout.js
 import * as entry from '../../../src/app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

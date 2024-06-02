@@ -26,8 +26,75 @@ body {
     rgb(var(--background-start-rgb));
 }
 
+
+.cadastro-container {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+
+
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
+
+
+
+
+
+/*
+ABAIXO O CSS DO PAINEL DE ADMINISTRADOR
+*/
+
+.admin-container {
+  padding: 20px;
+}
+
+.navbar {
+  background-color: #333;
+  color: white;
+  padding: 10px;
+}
+
+.navbar-left {
+  float: left;
+}
+
+.user-options {
+  margin-top: 20px;
+}
+
+.user-options button {
+  margin-right: 10px;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.user-options button:hover {
+  background-color: #0056b3;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
