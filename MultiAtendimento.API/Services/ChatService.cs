@@ -26,5 +26,13 @@ namespace MultiAtendimento.API.Services
             _chatRepository.Criar(chat);
             return chat;
         }
+
+        public void AdicionarMensagem(Mensagem mensagem)
+        {
+            if (string.IsNullOrWhiteSpace(mensagem.Conteudo))
+                return;
+
+            _chatRepository.AdicionarMensagem(mensagem);
+        }
     }
 }

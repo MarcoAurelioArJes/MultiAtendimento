@@ -6,8 +6,16 @@ namespace MultiAtendimento.API.Repository
 {
     public class ChatRepository : BaseRepository<Chat>, IChatRepository
     {
-        public ChatRepository(ContextoDoBancoDeDados contextoDoBancoDeDados) : base(contextoDoBancoDeDados)
+        private readonly IMensagemRepository _mensagemRepository;
+        public ChatRepository(ContextoDoBancoDeDados contextoDoBancoDeDados, IMensagemRepository mensagemRepository) : base(contextoDoBancoDeDados)
         {
+            _mensagemRepository = mensagemRepository;
+        }
+
+        public void AdicionarMensagem(Mensagem mensagem)
+        {
+            _mensagemRepository.Criar(mensagem);
+            _contextoDoBancoDeDados.SaveChanges();
         }
     }
 }

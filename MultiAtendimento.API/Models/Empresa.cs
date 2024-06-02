@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MultiAtendimento.API.Models
 {
-    [PrimaryKey(nameof(Id), nameof(Cnpj))]
-    public class Empresa : BaseModel
+    public class Empresa
     {
+        [Key]
+        [MaxLength(14)]
         public string Cnpj { get; set; }
         public string Nome { get; set; }
     }

@@ -12,7 +12,7 @@ using MultiAtendimento.API.Repository.BancoDeDados;
 namespace MultiAtendimento.API.Migrations
 {
     [DbContext(typeof(ContextoDoBancoDeDados))]
-    [Migration("20240528043010_MigracaoInicial")]
+    [Migration("20240531070823_MigracaoInicial")]
     partial class MigracaoInicial
     {
         /// <inheritdoc />
@@ -25,35 +25,6 @@ namespace MultiAtendimento.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MultiAtendimento.API.Models.Cargo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("EmpresaCnpj")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EmpresaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Nivel")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmpresaId", "EmpresaCnpj");
-
-                    b.ToTable("Cargos");
-                });
-
             modelBuilder.Entity("MultiAtendimento.API.Models.Chat", b =>
                 {
                     b.Property<int>("Id")
@@ -62,21 +33,15 @@ namespace MultiAtendimento.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AtendenteId")
+                    b.Property<int?>("AtendenteId")
                         .HasColumnType("int");
-
-                    b.Property<Guid>("ChatId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ClienteId")
                         .HasColumnType("int");
 
                     b.Property<string>("EmpresaCnpj")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EmpresaId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(14)");
 
                     b.Property<int>("SetorId")
                         .HasColumnType("int");
@@ -90,9 +55,9 @@ namespace MultiAtendimento.API.Migrations
 
                     b.HasIndex("ClienteId");
 
-                    b.HasIndex("SetorId");
+                    b.HasIndex("EmpresaCnpj");
 
-                    b.HasIndex("EmpresaId", "EmpresaCnpj");
+                    b.HasIndex("SetorId");
 
                     b.ToTable("Chats");
                 });
@@ -107,35 +72,35 @@ namespace MultiAtendimento.API.Migrations
 
                     b.Property<string>("EmpresaCnpj")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EmpresaId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(14)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("SetorId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("EmpresaId", "EmpresaCnpj");
+                    b.HasIndex("EmpresaCnpj");
+
+                    b.HasIndex("SetorId");
 
                     b.ToTable("Clientes");
                 });
 
             modelBuilder.Entity("MultiAtendimento.API.Models.Empresa", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<string>("Cnpj")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(14)
+                        .HasColumnType("nvarchar(14)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id", "Cnpj");
+                    b.HasKey("Cnpj");
 
                     b.ToTable("Empresas");
                 });
@@ -166,10 +131,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.Property<string>("EmpresaCnpj")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EmpresaId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(14)");
 
                     b.HasKey("Id");
 
@@ -179,7 +141,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.HasIndex("ClienteId");
 
-                    b.HasIndex("EmpresaId", "EmpresaCnpj");
+                    b.HasIndex("EmpresaCnpj");
 
                     b.ToTable("Mensagens");
                 });
@@ -194,10 +156,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.Property<string>("EmpresaCnpj")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EmpresaId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(14)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -205,7 +164,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmpresaId", "EmpresaCnpj");
+                    b.HasIndex("EmpresaCnpj");
 
                     b.ToTable("Setores");
                 });
@@ -218,7 +177,7 @@ namespace MultiAtendimento.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CargoId")
+                    b.Property<int>("Cargo")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -227,10 +186,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.Property<string>("EmpresaCnpj")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EmpresaId")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(14)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -240,38 +196,23 @@ namespace MultiAtendimento.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SetorId")
+                    b.Property<int?>("SetorId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CargoId");
+                    b.HasIndex("EmpresaCnpj");
 
                     b.HasIndex("SetorId");
 
-                    b.HasIndex("EmpresaId", "EmpresaCnpj");
-
                     b.ToTable("Usuarios");
-                });
-
-            modelBuilder.Entity("MultiAtendimento.API.Models.Cargo", b =>
-                {
-                    b.HasOne("MultiAtendimento.API.Models.Empresa", "Empresa")
-                        .WithMany()
-                        .HasForeignKey("EmpresaId", "EmpresaCnpj")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Empresa");
                 });
 
             modelBuilder.Entity("MultiAtendimento.API.Models.Chat", b =>
                 {
                     b.HasOne("MultiAtendimento.API.Models.Usuario", "Atendente")
                         .WithMany()
-                        .HasForeignKey("AtendenteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AtendenteId");
 
                     b.HasOne("MultiAtendimento.API.Models.Cliente", "Cliente")
                         .WithMany()
@@ -279,15 +220,15 @@ namespace MultiAtendimento.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MultiAtendimento.API.Models.Setor", "Setor")
+                    b.HasOne("MultiAtendimento.API.Models.Empresa", "Empresa")
                         .WithMany()
-                        .HasForeignKey("SetorId")
+                        .HasForeignKey("EmpresaCnpj")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MultiAtendimento.API.Models.Empresa", "Empresa")
+                    b.HasOne("MultiAtendimento.API.Models.Setor", "Setor")
                         .WithMany()
-                        .HasForeignKey("EmpresaId", "EmpresaCnpj")
+                        .HasForeignKey("SetorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -304,11 +245,19 @@ namespace MultiAtendimento.API.Migrations
                 {
                     b.HasOne("MultiAtendimento.API.Models.Empresa", "Empresa")
                         .WithMany()
-                        .HasForeignKey("EmpresaId", "EmpresaCnpj")
+                        .HasForeignKey("EmpresaCnpj")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MultiAtendimento.API.Models.Setor", "Setor")
+                        .WithMany()
+                        .HasForeignKey("SetorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Empresa");
+
+                    b.Navigation("Setor");
                 });
 
             modelBuilder.Entity("MultiAtendimento.API.Models.Mensagem", b =>
@@ -333,7 +282,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.HasOne("MultiAtendimento.API.Models.Empresa", "Empresa")
                         .WithMany()
-                        .HasForeignKey("EmpresaId", "EmpresaCnpj")
+                        .HasForeignKey("EmpresaCnpj")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -350,7 +299,7 @@ namespace MultiAtendimento.API.Migrations
                 {
                     b.HasOne("MultiAtendimento.API.Models.Empresa", "Empresa")
                         .WithMany()
-                        .HasForeignKey("EmpresaId", "EmpresaCnpj")
+                        .HasForeignKey("EmpresaCnpj")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -359,25 +308,15 @@ namespace MultiAtendimento.API.Migrations
 
             modelBuilder.Entity("MultiAtendimento.API.Models.Usuario", b =>
                 {
-                    b.HasOne("MultiAtendimento.API.Models.Cargo", "Cargo")
+                    b.HasOne("MultiAtendimento.API.Models.Empresa", "Empresa")
                         .WithMany()
-                        .HasForeignKey("CargoId")
+                        .HasForeignKey("EmpresaCnpj")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MultiAtendimento.API.Models.Setor", "Setor")
                         .WithMany()
-                        .HasForeignKey("SetorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MultiAtendimento.API.Models.Empresa", "Empresa")
-                        .WithMany()
-                        .HasForeignKey("EmpresaId", "EmpresaCnpj")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cargo");
+                        .HasForeignKey("SetorId");
 
                     b.Navigation("Empresa");
 

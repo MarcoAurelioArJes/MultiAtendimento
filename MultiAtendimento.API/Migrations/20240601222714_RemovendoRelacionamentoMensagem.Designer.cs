@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MultiAtendimento.API.Repository.BancoDeDados;
 
@@ -11,9 +12,11 @@ using MultiAtendimento.API.Repository.BancoDeDados;
 namespace MultiAtendimento.API.Migrations
 {
     [DbContext(typeof(ContextoDoBancoDeDados))]
-    partial class ContextoDoBancoDeDadosModelSnapshot : ModelSnapshot
+    [Migration("20240601222714_RemovendoRelacionamentoMensagem")]
+    partial class RemovendoRelacionamentoMensagem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,6 +119,9 @@ namespace MultiAtendimento.API.Migrations
                     b.Property<string>("Conteudo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DataEHora")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("EmpresaCnpj")
                         .IsRequired()

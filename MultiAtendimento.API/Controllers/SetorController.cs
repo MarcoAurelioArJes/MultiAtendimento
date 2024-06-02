@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MultiAtendimento.API.Services;
 using MultiAtendimento.API.Models.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MultiAtendimento.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Roles = "ADMIN")]
     public class SetorController : ControllerBase
     {
         private readonly SetorService _setorService;
@@ -44,14 +46,12 @@ namespace MultiAtendimento.API.Controllers
             }
         }
 
-        //TO DO
-        //REMOVER O PARAMETRO cnpjEmpresa e utilizar a partir das CLAIMS quando for autenticado
         [HttpGet("setores")]
-        public IActionResult Setores(string cnpjEmpresa)
+        public IActionResult Setores()
         {
             try
             {
-                var setores = _setorService.ObterTodosOsSetoresPorEmpresa(cnpjEmpresa);
+                var setores = _setorService.ObterTodosOsSetores();
                 return Ok(setores);
             }
             catch (Exception ex)

@@ -15,34 +15,31 @@ namespace MultiAtendimento.API.Migrations
                 name: "Empresas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Cnpj = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Cnpj = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: false),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Empresas", x => new { x.Id, x.Cnpj });
+                    table.PrimaryKey("PK_Empresas", x => x.Cnpj);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Cargos",
+                name: "Setores",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmpresaId = table.Column<int>(type: "int", nullable: false),
-                    EmpresaCnpj = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Nivel = table.Column<int>(type: "int", nullable: false)
+                    EmpresaCnpj = table.Column<string>(type: "nvarchar(14)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cargos", x => x.Id);
+                    table.PrimaryKey("PK_Setores", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cargos_Empresas_EmpresaId_EmpresaCnpj",
-                        columns: x => new { x.EmpresaId, x.EmpresaCnpj },
+                        name: "FK_Setores_Empresas_EmpresaCnpj",
+                        column: x => x.EmpresaCnpj,
                         principalTable: "Empresas",
-                        principalColumns: new[] { "Id", "Cnpj" },
+                        principalColumn: "Cnpj",
                         onDelete: ReferentialAction.NoAction);
                 });
 
@@ -53,38 +50,23 @@ namespace MultiAtendimento.API.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmpresaId = table.Column<int>(type: "int", nullable: false),
-                    EmpresaCnpj = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    SetorId = table.Column<int>(type: "int", nullable: false),
+                    EmpresaCnpj = table.Column<string>(type: "nvarchar(14)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Clientes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Clientes_Empresas_EmpresaId_EmpresaCnpj",
-                        columns: x => new { x.EmpresaId, x.EmpresaCnpj },
+                        name: "FK_Clientes_Empresas_EmpresaCnpj",
+                        column: x => x.EmpresaCnpj,
                         principalTable: "Empresas",
-                        principalColumns: new[] { "Id", "Cnpj" },
+                        principalColumn: "Cnpj",
                         onDelete: ReferentialAction.NoAction);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Setores",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmpresaId = table.Column<int>(type: "int", nullable: false),
-                    EmpresaCnpj = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Setores", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Setores_Empresas_EmpresaId_EmpresaCnpj",
-                        columns: x => new { x.EmpresaId, x.EmpresaCnpj },
-                        principalTable: "Empresas",
-                        principalColumns: new[] { "Id", "Cnpj" },
+                        name: "FK_Clientes_Setores_SetorId",
+                        column: x => x.SetorId,
+                        principalTable: "Setores",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                 });
 
@@ -97,32 +79,24 @@ namespace MultiAtendimento.API.Migrations
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Senha = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SetorId = table.Column<int>(type: "int", nullable: false),
-                    EmpresaId = table.Column<int>(type: "int", nullable: false),
-                    EmpresaCnpj = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CargoId = table.Column<int>(type: "int", nullable: false)
+                    Cargo = table.Column<int>(type: "int", nullable: false),
+                    SetorId = table.Column<int>(type: "int", nullable: true),
+                    EmpresaCnpj = table.Column<string>(type: "nvarchar(14)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuarios", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Usuarios_Cargos_CargoId",
-                        column: x => x.CargoId,
-                        principalTable: "Cargos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
-                        name: "FK_Usuarios_Empresas_EmpresaId_EmpresaCnpj",
-                        columns: x => new { x.EmpresaId, x.EmpresaCnpj },
+                        name: "FK_Usuarios_Empresas_EmpresaCnpj",
+                        column: x => x.EmpresaCnpj,
                         principalTable: "Empresas",
-                        principalColumns: new[] { "Id", "Cnpj" },
+                        principalColumn: "Cnpj",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Usuarios_Setores_SetorId",
                         column: x => x.SetorId,
                         principalTable: "Setores",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -131,12 +105,10 @@ namespace MultiAtendimento.API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ChatId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EmpresaId = table.Column<int>(type: "int", nullable: false),
-                    EmpresaCnpj = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    AtendenteId = table.Column<int>(type: "int", nullable: false),
-                    SetorId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    EmpresaCnpj = table.Column<string>(type: "nvarchar(14)", nullable: false),
+                    AtendenteId = table.Column<int>(type: "int", nullable: true),
+                    SetorId = table.Column<int>(type: "int", nullable: false),
                     ClienteId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -149,10 +121,10 @@ namespace MultiAtendimento.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_Chats_Empresas_EmpresaId_EmpresaCnpj",
-                        columns: x => new { x.EmpresaId, x.EmpresaCnpj },
+                        name: "FK_Chats_Empresas_EmpresaCnpj",
+                        column: x => x.EmpresaCnpj,
                         principalTable: "Empresas",
-                        principalColumns: new[] { "Id", "Cnpj" },
+                        principalColumn: "Cnpj",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Chats_Setores_SetorId",
@@ -164,8 +136,7 @@ namespace MultiAtendimento.API.Migrations
                         name: "FK_Chats_Usuarios_AtendenteId",
                         column: x => x.AtendenteId,
                         principalTable: "Usuarios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -174,13 +145,12 @@ namespace MultiAtendimento.API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    DataEHora = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Conteudo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmpresaCnpj = table.Column<string>(type: "nvarchar(14)", nullable: false),
                     ChatId = table.Column<int>(type: "int", nullable: false),
                     AtendenteId = table.Column<int>(type: "int", nullable: false),
-                    ClienteId = table.Column<int>(type: "int", nullable: false),
-                    EmpresaId = table.Column<int>(type: "int", nullable: false),
-                    EmpresaCnpj = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DataEHora = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Conteudo = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ClienteId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -198,10 +168,10 @@ namespace MultiAtendimento.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_Mensagens_Empresas_EmpresaId_EmpresaCnpj",
-                        columns: x => new { x.EmpresaId, x.EmpresaCnpj },
+                        name: "FK_Mensagens_Empresas_EmpresaCnpj",
+                        column: x => x.EmpresaCnpj,
                         principalTable: "Empresas",
-                        principalColumns: new[] { "Id", "Cnpj" },
+                        principalColumn: "Cnpj",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Mensagens_Usuarios_AtendenteId",
@@ -210,11 +180,6 @@ namespace MultiAtendimento.API.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.NoAction);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Cargos_EmpresaId_EmpresaCnpj",
-                table: "Cargos",
-                columns: new[] { "EmpresaId", "EmpresaCnpj" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Chats_AtendenteId",
@@ -227,9 +192,9 @@ namespace MultiAtendimento.API.Migrations
                 column: "ClienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Chats_EmpresaId_EmpresaCnpj",
+                name: "IX_Chats_EmpresaCnpj",
                 table: "Chats",
-                columns: new[] { "EmpresaId", "EmpresaCnpj" });
+                column: "EmpresaCnpj");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Chats_SetorId",
@@ -237,9 +202,14 @@ namespace MultiAtendimento.API.Migrations
                 column: "SetorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Clientes_EmpresaId_EmpresaCnpj",
+                name: "IX_Clientes_EmpresaCnpj",
                 table: "Clientes",
-                columns: new[] { "EmpresaId", "EmpresaCnpj" });
+                column: "EmpresaCnpj");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Clientes_SetorId",
+                table: "Clientes",
+                column: "SetorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Mensagens_AtendenteId",
@@ -257,24 +227,19 @@ namespace MultiAtendimento.API.Migrations
                 column: "ClienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Mensagens_EmpresaId_EmpresaCnpj",
+                name: "IX_Mensagens_EmpresaCnpj",
                 table: "Mensagens",
-                columns: new[] { "EmpresaId", "EmpresaCnpj" });
+                column: "EmpresaCnpj");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Setores_EmpresaId_EmpresaCnpj",
+                name: "IX_Setores_EmpresaCnpj",
                 table: "Setores",
-                columns: new[] { "EmpresaId", "EmpresaCnpj" });
+                column: "EmpresaCnpj");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Usuarios_CargoId",
+                name: "IX_Usuarios_EmpresaCnpj",
                 table: "Usuarios",
-                column: "CargoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Usuarios_EmpresaId_EmpresaCnpj",
-                table: "Usuarios",
-                columns: new[] { "EmpresaId", "EmpresaCnpj" });
+                column: "EmpresaCnpj");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Usuarios_SetorId",
@@ -296,9 +261,6 @@ namespace MultiAtendimento.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Usuarios");
-
-            migrationBuilder.DropTable(
-                name: "Cargos");
 
             migrationBuilder.DropTable(
                 name: "Setores");

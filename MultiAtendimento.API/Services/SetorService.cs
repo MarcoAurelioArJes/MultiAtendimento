@@ -10,15 +10,22 @@ namespace MultiAtendimento.API.Services
     {
         private readonly IMapper _mapper;
         private readonly ISetorRepository _setorRepository;
-        public SetorService(IMapper mapper, ISetorRepository setorRepository)
+        private readonly IHttpContextAccessor _httpContext;
+
+        public SetorService(IMapper mapper, ISetorRepository setorRepository, IHttpContextAccessor httpContext)
         {
             _mapper = mapper;
             _setorRepository = setorRepository;
+            _httpContext = httpContext;
         }
 
         public void Criar(SetorInput setorInput)
         {
             var setor = _mapper.Map<Setor>(setorInput);
+            
+            var empresaCnpj = _httpContext.HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj"))?.Value;
+            setor.EmpresaCnpj = empresaCnpj;
+
             _setorRepository.Criar(setor);
         }
 
@@ -41,9 +48,10 @@ namespace MultiAtendimento.API.Services
             return setorDb;
         }
 
-        public List<Setor> ObterTodosOsSetoresPorEmpresa(string cnpjDaEmpresa)
+        public List<Setor> ObterTodosOsSetores()
         {
-            return _setorRepository.ObterTodosPorCnpjDaEmpresa(cnpjDaEmpresa);
+            var empresaCnpj = _httpContext.HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj"))?.Value;
+            return _setorRepository.ObterTodosPorCnpjDaEmpresa(empresaCnpj);
         }
     }
 }
