@@ -1,15 +1,15 @@
-import React from 'react';
-import Navbar from '@/components/navBar/navBar';
+"use client";
 
-const Index = () => {
+import Navbar from '../components/navBar/navBarExterna';
+import React from 'react';
+
+export default function Home () {
     return (
         <div>
-            <Navbar></Navbar>
+            <Navbar />
             <main>
                 <h1>Teste</h1>
             </main>
         </div>
     );
 };
-
-export default Index;
