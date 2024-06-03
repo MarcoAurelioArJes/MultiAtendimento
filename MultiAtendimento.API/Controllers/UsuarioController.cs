@@ -62,7 +62,7 @@ namespace MultiAtendimento.API.Controllers
         }
 
 
-        [HttpGet("detalhes/{id}")]
+        [HttpGet("obterPorId/{id}")]
         public IActionResult ObterPorId(string id)
         {
             try
@@ -77,8 +77,8 @@ namespace MultiAtendimento.API.Controllers
             }
         }
 
-        [HttpGet("usuarios")]
-        public IActionResult Usuarios(string cnpj)
+        [HttpGet("obterUsuarios")]
+        public IActionResult ObterUsuarios(string cnpj)
         {
             try
             {
