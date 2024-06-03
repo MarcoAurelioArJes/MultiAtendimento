@@ -1,5 +1,5 @@
-import Form from '../componentes/form/form.js'
-import SubmitButton from '../componentes/button/submitButton.js'
+import Form from '../../componentes/form/form.js'
+import SubmitButton from '../../componentes/button/submitButton.js'
 
 export default function Login() {
 
