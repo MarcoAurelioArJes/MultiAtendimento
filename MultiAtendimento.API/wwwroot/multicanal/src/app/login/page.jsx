@@ -1,7 +1,31 @@
 "use client";
 import Navbar from '../../components/navBar/navBarExterna';
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
+import usuarioRepositorio from '../../repositorio/usuarioRepositorio.js'
 
-export default function Example() {
+
+export default function Login() {
+  const [email, setEmail] = useState();
+  const [senha, setSenha] = useState();
+
+  const objeto = {
+    email: email,
+    senha: senha
+  }
+
+  const entrar = (e) => {
+    e.preventDefault();
+    usuarioRepositorio.entrar(objeto)
+    .then((res) => {
+      localStorage.setItem("tokenDeAcesso", res.tokenDeAcesso);
+      toast.success("Login efetuado sucesso!!!");
+    })
+    .catch(error => {
+      toast.error(error.message)
+    })
+  }
+
   return (
     <>
       <Navbar></Navbar>
@@ -18,7 +42,7 @@ export default function Example() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
+          <form className="space-y-6" action="#" method="POST" onSubmit={entrar}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                 Email
@@ -31,6 +55,7 @@ export default function Example() {
                   autoComplete="email"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  onChange={e => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -49,6 +74,7 @@ export default function Example() {
                   autoComplete="current-password"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  onChange={e => setSenha(e.target.value)}
                 />
               </div>
             </div>
