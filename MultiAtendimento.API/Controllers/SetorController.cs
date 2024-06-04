@@ -46,7 +46,7 @@ namespace MultiAtendimento.API.Controllers
             }
         }
 
-        [HttpGet("setores")]
+        [HttpGet("obterSetores")]
         public IActionResult Setores()
         {
             try

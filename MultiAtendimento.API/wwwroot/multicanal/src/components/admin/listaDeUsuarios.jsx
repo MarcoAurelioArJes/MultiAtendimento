@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import DeleteDialog from './DeleteDialog';
-import UpdateCreateDialog from './UpdateCreateDialog';
+import { useState, useEffect } from 'react';
+import DeleteDialog from './DeleteDialog.jsx';
+import CriarEAtualizarUsuarioDialog from './criarEAtualizarUsuarioDialog.jsx';
+import usuarioRepositorio from '../../repositorio/usuarioRepositorio.js'
 
 // Receber da API
 let users = [
@@ -22,11 +23,17 @@ let users = [
     }
 ];
 
-export default function UserList() {
+export default function ListaDeUsuarios() {
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-    const [showUpdateDialog, setShowUpdateDialog] = useState(false);
-    const [selectedEntity, setSelectedEntity] = useState(null);
+    
+    const [usuarios, setUsuarios] = useState([]);
+    const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
+    const [mostrarAtualizarDialog, setMostrarAtualizarDialog] = useState(false);
     const [dialogMode, setDialogMode] = useState('update');
+
+    useEffect(()=>{
+        usuarioRepositorio.obterUsuarios().then(data => setUsuarios(data))
+    },[])
 
     const handleDeleteButtonClick = (entity) => {
         setSelectedEntity(entity);
@@ -36,16 +43,16 @@ export default function UserList() {
     const handleEditButtonClick = (user) => {
         setSelectedEntity(user);
         setDialogMode('update');
-        setShowUpdateDialog(true);
+        setMostrarAtualizarDialog(true);
     };
 
-    const handleCreateButtonClick = () => {
-        setSelectedEntity(null);
-        setDialogMode('create');
-        setShowUpdateDialog(true);
+    const handleMostrarTelaDeCriacao = () => {
+        setUsuarioSelecionado(null);
+        setDialogMode('criar');
+        setMostrarAtualizarDialog(true);
     };
 
-    const updateUser = (updatedUser) => {
+    const atualizarUsuario = (updatedUser) => {
         if (dialogMode === 'update') {
             users = users.map(user => user.Email === updatedUser.Email ? updatedUser : user);
         } else {
@@ -58,23 +65,23 @@ export default function UserList() {
             <div className="mx-auto max-w-4xl border-b-2">
                 <h1 className='text-black mb-4 font-extrabold text-2xl'> Usuários </h1>
                 <ul role="list" className="divide-y divide-gray-100">
-                    {users.map((user) => (
-                        <li key={user.Email} className="flex justify-between gap-x-6 py-5">
+                    {usuarios.map((usuario) => (
+                        <li key={usuario.id} className="flex justify-between gap-x-6 py-5">
                             <div className="flex min-w-0 gap-x-4">
                                 <img
                                     className="h-12 w-12 flex-none rounded-full bg-gray-50"
-                                    src={user.imageUrl ? user.imageUrl : '/user-profile-icon.svg'}
-                                    alt={user.Nome}
+                                    src={usuario.imageUrl ? usuario.imageUrl : '/user-profile-icon.svg'}
+                                    alt={usuario.nome}
                                 />
                                 <div className="min-w-0 flex-auto">
-                                    <p className="text-sm font-semibold leading-6 text-gray-900">{user.Nome}</p>
-                                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">{user.Email}</p>
+                                    <p className="text-sm font-semibold leading-6 text-gray-900">{usuario.nome}</p>
+                                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">{usuario.email}</p>
                                 </div>
                             </div>
                             <div className="flex gap-x-4">
                                 <div className="flex flex-col items-end">
-                                    <p className="text-sm leading-6 text-gray-900">{user.cargo}</p>
-                                    <p className="text-sm leading-6 text-gray-900">{user.setor}</p>
+                                    <p className="text-sm leading-6 text-gray-900">{usuario.cargo === 0 ? "Administrador" : "Atendente"}</p>
+                                    <p className="text-sm leading-6 text-gray-900">{usuario.setorId == null ? "Todos" : usuario.setor}</p>
                                 </div>
                                 <div className="flex flex-col gap-y-2 items-end">
                                     <button
@@ -102,7 +109,7 @@ export default function UserList() {
                             <div className="flex gap-y-2 items-end">
                                 <button
                                     className="flex items-center px-2 py-1 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                                    onClick={handleCreateButtonClick}
+                                    onClick={handleMostrarTelaDeCriacao}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -123,11 +130,11 @@ export default function UserList() {
                 )
             }
             {
-                showUpdateDialog && (
-                    <UpdateCreateDialog
-                        onClose={() => setShowUpdateDialog(false)}
-                        user={selectedEntity}
-                        updateUser={updateUser}
+                mostrarAtualizarDialog && (
+                    <CriarEAtualizarUsuarioDialog
+                        aoFechar={() => setMostrarAtualizarDialog(false)}
+                        usuario={usuarioSelecionado}
+                        atualizarUsuario={atualizarUsuario}
                         mode={dialogMode}
                     />
                 )
