@@ -11,9 +11,10 @@ import {
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 //Deve buscar o usuário na api
-const user = { name: 'AAA', 
+const user = { name: 'Atendente Max', 
 picture: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80', 
 admin: true }
+
 
 
 const navigation = [
