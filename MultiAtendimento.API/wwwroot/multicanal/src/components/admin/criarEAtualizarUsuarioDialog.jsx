@@ -1,69 +1,64 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import SelectMenu from './SelectMenu';
+import usuarioRepositorio from '@/repositorio/usuarioRepositorio';
+import setorRepositorio from '@/repositorio/setorRepositorio';
+import { toast } from 'react-hot-toast';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function UpdateCreateDialog({ onClose, user, updateUser, mode }) {
-
-  const roles = [
-    { id: 1, nome: "Administrador" },
-    { id: 2, nome: "Atendente" }
+export default function CriarEAtualizarDialog({ aoFechar, usuario, atualizarUsuario, mode }) {
+  const cargos = [
+    { id: 0, nome: "Administrador" },
+    { id: 1, nome: "Atendente" }
   ];
 
-  //Buscar da API
-  let sectors = [
-    { id: 1, nome: 'Administrativo' },
-    { id: 2, nome: 'Suporte' }
-  ];
+  useEffect(() => {
+    async function obterSetores() {
+      let setores = await setorRepositorio.obterSetores();
+      setSetores(setores)
+      setSetorSelecionado(mode === 'atualizar' ? setores.find(setor => setor.id === usuario.setorId) : setores[0]);
+    }
+    obterSetores();
 
+    setCargoSelecionado(mode === 'atualizar' ? cargos.find(cargo => cargo.id === usuario.cargo) : cargos[0])
+  },[])
 
-  const [formData, setFormData] = useState( mode === 'update' ? { ...user } : { Nome: '', Email: '', Senha: '', setor: sectors[0].id, cargo: 1 });
-  const [selectedSector, setSelectedSector] = useState(mode === 'update' ? sectors.find(sector => sector.nome === user.setor) : sectors[0]);
-  const [selectedRole, setSelectedRole] = useState( mode === 'update' ? { id: user.cargo, nome: user.cargo === 1 ? "Administrador" : "Atendente" } : { id: 2, nome: "Atendente" });
+  const dadosFormularioPadrao = { nome: '', email: '', senha: '', setorId: 0, cargo: 0 };
+  const [setores, setSetores] = useState([]);
+  const [setorSelecionado, setSetorSelecionado] = useState();
+  const [cargoSelecionado, setCargoSelecionado] = useState();
+  const [dadosDoFormulario, setDadosDoFormulario] = useState(mode === 'atualizar' ? { ...usuario } : dadosFormularioPadrao);
 
-  const handleInputChange = (e) => {
+  const handleAoMudarOValorDoInput = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({...prevData, [name]: value,}));
+    console.log(name, value)
+    setDadosDoFormulario((dadosDoFormulario) => ({...dadosDoFormulario, [name]: value,}));
   };
 
-  const handleSubmit = () => {
-    const updatedData = {
-      ...formData,
-      setorId: selectedSector.id,
-      cargo: selectedRole.id
-    };
+  const handleCriarUsuario = async () => {
+    try {
+      const dadosUsuario = {
+        ...dadosDoFormulario,
+        setorId: setorSelecionado.id,
+        cargo: cargoSelecionado.id
+      };
+  
+      await mode === 'atualizar' ? usuarioRepositorio.atualizar(usuario.id, dadosUsuario) : usuarioRepositorio.criar(dadosUsuario);
 
-    const url = mode === 'update' ? `/api/users/${user.Id}` : '/api/users';
-    const method = mode === 'update' ? 'PUT' : 'POST';
+      setDadosDoFormulario(dadosFormularioPadrao)
+      toast.success(`${cargoSelecionado.nome} cadastrado com sucesso!!!`)
+    }
+    catch (erro) {
 
-    fetch(url, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        updateUser(data);
-        onClose();
-      })
-      .catch((error) => {
-        console.error('Error updating user:', error);
-      });
+    }
   };
 
   return (
     <Transition show={true}>
-      <Dialog className="relative z-10" onClose={onClose}>
+      <Dialog className="relative z-10" onClose={aoFechar}>
         <TransitionChild
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -96,14 +91,14 @@ export default function UpdateCreateDialog({ onClose, user, updateUser, mode }) 
                         <form className="space-y-4 text-gray-500">
                           <div>
                             <label htmlFor="nome" className="block text-sm font-medium text-gray-700">
-                              {sectors[0].nome}
+                              Nome
                             </label>
                             <input
                               type="text"
-                              name="Nome"
+                              name="nome"
                               id="nome"
-                              value={formData.Nome}
-                              onChange={handleInputChange}
+                              value={dadosDoFormulario.nome}
+                              onChange={handleAoMudarOValorDoInput}
                               className="mt-1 block w-full rounded-md border-gray-300 text-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             />
                           </div>
@@ -113,10 +108,10 @@ export default function UpdateCreateDialog({ onClose, user, updateUser, mode }) 
                             </label>
                             <input
                               type="email"
-                              name="Email"
+                              name="email"
                               id="email"
-                              value={formData.Email}
-                              onChange={handleInputChange}
+                              value={dadosDoFormulario.email}
+                              onChange={handleAoMudarOValorDoInput}
                               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                               disabled={mode === 'update'}
                             />
@@ -127,28 +122,36 @@ export default function UpdateCreateDialog({ onClose, user, updateUser, mode }) 
                             </label>
                             <input
                               type="password"
-                              name="Senha"
+                              name="senha"
                               id="senha"
-                              value={formData.Senha}
-                              onChange={handleInputChange}
+                              value={dadosDoFormulario.senha}
+                              onChange={handleAoMudarOValorDoInput}
                               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             />
                           </div>
                           <div>
-                            <SelectMenu
-                              options={sectors}
-                              formLabel="Setores"
-                              selected={selectedSector}
-                              setSelected={setSelectedSector}
-                            />
+                            {
+                                setorSelecionado !== undefined && (
+                                  <SelectMenu
+                                  options={setores}
+                                  formLabel="Setores"
+                                  selected={setorSelecionado}
+                                  setSelected={setSetorSelecionado}
+                                />
+                                )
+                            }
                           </div>
                           <div>
-                            <SelectMenu
-                              options={roles}
-                              formLabel="Cargo"
-                              selected={selectedRole}
-                              setSelected={setSelectedRole}
-                            />
+                            {
+                                cargoSelecionado !== undefined && (
+                                  <SelectMenu
+                                  options={cargos}
+                                  formLabel="Cargo"
+                                  selected={cargoSelecionado}
+                                  setSelected={setCargoSelecionado}
+                                />
+                                )
+                            }
                           </div>
                         </form>
                       </div>
@@ -159,14 +162,14 @@ export default function UpdateCreateDialog({ onClose, user, updateUser, mode }) 
                   <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
-                    onClick={handleSubmit}
+                    onClick={handleCriarUsuario}
                   >
                     Enviar
                   </button>
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                    onClick={onClose}
+                    onClick={aoFechar}
                     data-autofocus
                   >
                     Cancelar

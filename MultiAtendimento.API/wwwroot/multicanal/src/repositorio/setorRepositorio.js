@@ -1,18 +1,7 @@
 import apiService from "./apiService";
 
-const baseEndpoint = "usuario"
+const baseEndpoint = "setor"
 export default {
-    async entrar(objetoUsuario) {
-        let respostaHttp = await apiService.requisicao({endpoint: `${baseEndpoint}/entrar`, verboHttp: "POST", body: objetoUsuario})
-
-        let resultado = await apiService.resposta(respostaHttp);
-
-        if (!respostaHttp.ok) {
-            throw new Error(resultado.title)
-        }
-
-        return resultado;
-    },
     async criar(objetoUsuario) {
         let respostaHttp = await apiService.requisicao({endpoint: `${baseEndpoint}/criar`, verboHttp: "POST", body: objetoUsuario})
 
@@ -23,8 +12,8 @@ export default {
             mensagem: resultado.value.mensagemErro});
         }
     },
-    async obterUsuarios() {
-        let respostaHttp = await apiService.requisicao({endpoint: `${baseEndpoint}/obterUsuarios`, verboHttp: "GET"})
+    async obterSetores() {
+        let respostaHttp = await apiService.requisicao({endpoint: `${baseEndpoint}/obterSetores`, verboHttp: "GET"})
         
         let respostaBody = await apiService.resposta(respostaHttp);
         

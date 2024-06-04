@@ -1,9 +1,8 @@
 "use client";
-
-import Navbar from '@/components/navBar/navBar';
 import React, { useState } from 'react';
-import UserList from '@/components/admin/userList';
-import SectorList from '@/components/admin/sectorList'
+import Navbar from '@/components/navBar/navBar';
+import ListaDeUsuarios from '@/components/admin/listaDeUsuarios';
+import ListaDeSetores from '@/components/admin/listaDeSetores'
 
 export default function Admin() {
     return (
@@ -13,16 +12,14 @@ export default function Admin() {
             </header>
             <main>
                 <div className=''>
-                    <UserList></UserList>
-                    <SectorList></SectorList>
+                    <ListaDeUsuarios></ListaDeUsuarios>
+                    <ListaDeSetores></ListaDeSetores>
                 </div>
             </main>
 
         </>
 
     );
-
-
 }
 
 

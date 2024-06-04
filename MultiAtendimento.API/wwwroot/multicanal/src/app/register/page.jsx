@@ -1,7 +1,8 @@
 "use client";
-import empresaRepositorio from '../../repositorio/empresaRepositorio.js'
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
+import Navbar from '../../components/navBar/navBarExterna.jsx';
+import empresaRepositorio from '../../repositorio/empresaRepositorio.js'
 
 export default function cadastro() {
   const [nome, setNome] = useState();
@@ -32,8 +33,9 @@ export default function cadastro() {
   }
 
   return (
-    
-    <div className="isolate bg-gray-50 px-6 py-24 sm:py-32 lg:px-8 ">
+    <>
+      <Navbar></Navbar>
+      <div className="bg-gray-50 px-6 py-24 sm:py-32 lg:px-8 ">
       <div
         className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
         aria-hidden="true"
@@ -161,5 +163,6 @@ export default function cadastro() {
         </div>
       </form>
     </div>
+    </>
   );
 }

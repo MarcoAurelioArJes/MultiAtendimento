@@ -78,10 +78,11 @@ namespace MultiAtendimento.API.Controllers
         }
 
         [HttpGet("obterUsuarios")]
-        public IActionResult ObterUsuarios(string cnpj)
+        public IActionResult ObterUsuarios()
         {
             try
             {
+                var cnpj = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj")).Value;
                 var usuarios = _usuarioService.ObterTodosOsUsuariosPorCnpjDaEmpresa(cnpj);
                 return Ok(usuarios);
             }
