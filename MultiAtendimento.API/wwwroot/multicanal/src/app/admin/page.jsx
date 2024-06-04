@@ -16,13 +16,6 @@ export default function Admin() {
                     <UserList></UserList>
                     <SectorList></SectorList>
                 </div>
-                <div className="admin-container">
-                    <h1>Administração do Site</h1>
-                    <div className="user-options">
-                        <button onClick={() => alert('Criar usuário')}>Criar Usuário</button>
-                        <button onClick={() => alert('Apagar usuário')}>Apagar Usuário</button>
-                    </div>
-                </div>
             </main>
 
         </>
