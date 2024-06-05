@@ -50,9 +50,11 @@ export default function CriarEAtualizarDialog({ aoFechar, usuario, atualizarUsua
 
       setDadosDoFormulario(dadosFormularioPadrao)
       toast.success(`${cargoSelecionado.nome} cadastrado com sucesso!!!`)
+      atualizarUsuario(dadosUsuario)
+      aoFechar()
     }
     catch (erro) {
-
+      toast.error(erro.message)
     }
   };
 

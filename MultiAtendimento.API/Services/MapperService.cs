@@ -13,6 +13,8 @@ namespace MultiAtendimento.API.Services
             CreateMap<ClienteInput, Cliente>();
 
             CreateMap<UsuarioInput, Usuario>();
+
+            CreateMap<AtualizarUsuarioInput, Usuario>();
         }
     }
 }

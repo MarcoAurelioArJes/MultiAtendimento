@@ -25,7 +25,7 @@ namespace MultiAtendimento.API.Repository
         public T Atualizar(T objeto)
         {
             var entry = _dbSet.Entry(objeto);
-            entry.State = EntityState.Modified;
+            entry.State = EntityState.Detached;
             _dbSet.Update(entry.Entity);
             _contextoDoBancoDeDados.SaveChanges();
 
