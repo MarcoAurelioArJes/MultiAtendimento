@@ -38,17 +38,18 @@ namespace MultiAtendimento.API.Services
             _usuarioRepository.Criar(usuario);
         }
 
-        public void Atualizar(int id, UsuarioInput usuarioInput)
+        public void Atualizar(int id, AtualizarUsuarioInput usuarioInput)
         {
             var usuarioRegister = _usuarioRepository.ObterPorId(id);
             if (usuarioRegister is null)
                 throw new BadHttpRequestException($"Usuário com ID {id} não encontrado", (int)HttpStatusCode.NotFound);
 
-            var usuarioNovo = _mapper.Map<Usuario>(usuarioInput);
+            usuarioRegister = _mapper.Map<Usuario>(usuarioInput);
             var setor = _setorService.ObterPorId(usuarioInput.SetorId);
-            usuarioNovo.SetorId = setor.Id;
+            usuarioRegister.SetorId = setor.Id;
+            usuarioRegister.EmpresaCnpj = _httpContext.HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj")).Value;
 
-            _usuarioRepository.Atualizar(usuarioNovo);
+            _usuarioRepository.Atualizar(usuarioRegister);
         }
 
         public Usuario ObterPorId(int id)

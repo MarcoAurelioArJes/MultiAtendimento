@@ -47,7 +47,7 @@ namespace MultiAtendimento.API.Controllers
         }
 
         [HttpPut("atualizar/{id}")]
-        public IActionResult Atualizar(string id, [FromBody] UsuarioInput usuarioInput)
+        public IActionResult Atualizar(string id, [FromBody] AtualizarUsuarioInput usuarioInput)
         {
             try
             {

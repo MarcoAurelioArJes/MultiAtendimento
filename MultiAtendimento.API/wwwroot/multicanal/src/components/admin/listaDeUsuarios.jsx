@@ -3,33 +3,13 @@ import DeleteDialog from './DeleteDialog.jsx';
 import CriarEAtualizarUsuarioDialog from './criarEAtualizarUsuarioDialog.jsx';
 import usuarioRepositorio from '../../repositorio/usuarioRepositorio.js'
 
-// Receber da API
-let users = [
-    {
-        id: 11,
-        Nome: 'Leslie Alexander',
-        Email: 'leslie.alexander@example.com',
-        cargo: 'Administrador',
-        imageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        setor: 'Administrativo'
-    },
-    {
-        id: 22,
-        Nome: 'Michael Foster',
-        Email: 'michael.foster@example.com',
-        cargo: 'Atendente',
-        imageUrl: '',
-        setor: 'Suporte'
-    }
-];
-
 export default function ListaDeUsuarios() {
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     
     const [usuarios, setUsuarios] = useState([]);
     const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
     const [mostrarAtualizarDialog, setMostrarAtualizarDialog] = useState(false);
-    const [dialogMode, setDialogMode] = useState('update');
+    const [dialogMode, setDialogMode] = useState('atualizar');
 
     useEffect(()=>{
         usuarioRepositorio.obterUsuarios().then(data => setUsuarios(data))
@@ -40,23 +20,25 @@ export default function ListaDeUsuarios() {
         setShowDeleteDialog(true);
     };
 
-    const handleEditButtonClick = (user) => {
-        setSelectedEntity(user);
-        setDialogMode('update');
+    const handleAoClicarEmEditarUsuario = (usuario) => {
+        setUsuarioSelecionado(usuario);
+        setDialogMode('atualizar');
         setMostrarAtualizarDialog(true);
     };
 
-    const handleMostrarTelaDeCriacao = () => {
+    const handleAoClicarEmNovoUsuario = () => {
         setUsuarioSelecionado(null);
         setDialogMode('criar');
         setMostrarAtualizarDialog(true);
     };
 
-    const atualizarUsuario = (updatedUser) => {
-        if (dialogMode === 'update') {
-            users = users.map(user => user.Email === updatedUser.Email ? updatedUser : user);
+    const atualizarUsuario = (usuarioAtualizado) => {
+        if (dialogMode === 'atualizar') {
+            let index = usuarios.findIndex(usuario => usuario.id === usuarioAtualizado.id ? usuarioAtualizado : usuario);
+            usuarios[index] = usuarioAtualizado;
         } else {
-            users.push(updatedUser);
+            console.log(usuarioAtualizado)
+            usuarios.push(usuarioAtualizado);
         }
     };
 
@@ -70,8 +52,8 @@ export default function ListaDeUsuarios() {
                             <div className="flex min-w-0 gap-x-4">
                                 <img
                                     className="h-12 w-12 flex-none rounded-full bg-gray-50"
-                                    src={usuario.imageUrl ? usuario.imageUrl : '/user-profile-icon.svg'}
-                                    alt={usuario.nome}
+                                    src={'/user-profile-icon.svg'}
+                                    alt={'Imagem ilustrativa'}
                                 />
                                 <div className="min-w-0 flex-auto">
                                     <p className="text-sm font-semibold leading-6 text-gray-900">{usuario.nome}</p>
@@ -86,7 +68,7 @@ export default function ListaDeUsuarios() {
                                 <div className="flex flex-col gap-y-2 items-end">
                                     <button
                                         className="flex items-center px-2 py-1 bg-green-500 text-white text-sm font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                        onClick={() => handleEditButtonClick(user)}
+                                        onClick={() => handleAoClicarEmEditarUsuario(usuario)}
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
@@ -109,7 +91,7 @@ export default function ListaDeUsuarios() {
                             <div className="flex gap-y-2 items-end">
                                 <button
                                     className="flex items-center px-2 py-1 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                                    onClick={handleMostrarTelaDeCriacao}
+                                    onClick={handleAoClicarEmNovoUsuario}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
