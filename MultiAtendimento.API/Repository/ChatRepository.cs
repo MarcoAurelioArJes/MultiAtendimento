@@ -1,4 +1,5 @@
-﻿using MultiAtendimento.API.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using MultiAtendimento.API.Models;
 using MultiAtendimento.API.Models.Interfaces;
 using MultiAtendimento.API.Repository.BancoDeDados;
 
@@ -16,6 +17,14 @@ namespace MultiAtendimento.API.Repository
         {
             _mensagemRepository.Criar(mensagem);
             _contextoDoBancoDeDados.SaveChanges();
+        }
+
+        public List<Chat> ObterChatsDoUsuario(int idUsuario)
+        {
+            return _dbSet
+                        .Include(c => c.Mensagens)
+                        .Where(c => c.AtendenteId == idUsuario)
+                        .ToList();
         }
     }
 }

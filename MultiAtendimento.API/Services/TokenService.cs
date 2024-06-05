@@ -53,7 +53,7 @@ namespace MultiAtendimento.API.Services
         {
             var claims = new Claim[]
             {
-                new Claim("chatId", chat.ChatId.ToString()),
+                new Claim("chatId", chat.Id.ToString()),
                 new Claim("clienteId", chat.ClienteId.ToString()),
                 new Claim("empresaCnpj", chat.EmpresaCnpj)
             };
@@ -62,6 +62,27 @@ namespace MultiAtendimento.API.Services
 
             var jwtHandler = new JwtSecurityTokenHandler();
             return jwtHandler.WriteToken(jwtToken);
+        }
+
+        public static JwtSecurityToken ObterTokenValido(string token)
+        {
+            var jwtHandler = new JwtSecurityTokenHandler();
+            jwtHandler.ValidateToken(token, ObterParametrosDoToken(), out SecurityToken securityToken);
+
+            if (securityToken == null)
+                throw new SecurityTokenException("Chat expirado necessário criar um novo");
+
+            return jwtHandler.ReadJwtToken(token);
+        }
+
+        public static TokenValidationParameters ObterParametrosDoToken()
+        {
+            return new TokenValidationParameters
+            {
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(TokenService.PrivateKey)),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
         }
     }
 }

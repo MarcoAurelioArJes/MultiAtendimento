@@ -21,6 +21,16 @@ namespace MultiAtendimento.API.Repository.BancoDeDados
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Chat>()
+                .HasMany(c => c.Mensagens)
+                .WithOne(c => c.Chat)
+                .HasForeignKey(c => c.ChatId);
+
+            modelBuilder.Entity<Mensagem>()
+                .HasOne(c => c.Chat)
+                .WithMany(c => c.Mensagens)
+                .HasForeignKey(c => c.ChatId);
         }
 
         public DbSet<Empresa> Empresas { get; set; }

@@ -56,7 +56,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.HasIndex("SetorId");
 
-                    b.ToTable("Chats");
+                    b.ToTable("Chats", (string)null);
                 });
 
             modelBuilder.Entity("MultiAtendimento.API.Models.Cliente", b =>
@@ -84,7 +84,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.HasIndex("SetorId");
 
-                    b.ToTable("Clientes");
+                    b.ToTable("Clientes", (string)null);
                 });
 
             modelBuilder.Entity("MultiAtendimento.API.Models.Empresa", b =>
@@ -99,7 +99,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.HasKey("Cnpj");
 
-                    b.ToTable("Empresas");
+                    b.ToTable("Empresas", (string)null);
                 });
 
             modelBuilder.Entity("MultiAtendimento.API.Models.Mensagem", b =>
@@ -127,7 +127,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.HasIndex("EmpresaCnpj");
 
-                    b.ToTable("Mensagens");
+                    b.ToTable("Mensagens", (string)null);
                 });
 
             modelBuilder.Entity("MultiAtendimento.API.Models.Setor", b =>
@@ -150,7 +150,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.HasIndex("EmpresaCnpj");
 
-                    b.ToTable("Setores");
+                    b.ToTable("Setores", (string)null);
                 });
 
             modelBuilder.Entity("MultiAtendimento.API.Models.Usuario", b =>
@@ -189,7 +189,7 @@ namespace MultiAtendimento.API.Migrations
 
                     b.HasIndex("SetorId");
 
-                    b.ToTable("Usuarios");
+                    b.ToTable("Usuarios", (string)null);
                 });
 
             modelBuilder.Entity("MultiAtendimento.API.Models.Chat", b =>

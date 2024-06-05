@@ -4,6 +4,7 @@ using MultiAtendimento.API.Repository;
 using MultiAtendimento.API.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using MultiAtendimento.API.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MultiAtendimento.API.Hubs
 {
@@ -30,7 +31,7 @@ namespace MultiAtendimento.API.Hubs
 
                 var chat = _chatService.Criar(clienteCriado);
 
-                await Groups.AddToGroupAsync(Context.ConnectionId, chat.ChatId.ToString());
+                await Groups.AddToGroupAsync(Context.ConnectionId, chat.Id.ToString());
 
                 //TO DO REMOVER _listaDeChatsTemporaria
                 //_listaDeChatsTemporaria.Chats[Context.ConnectionId] = chat;
@@ -43,6 +44,36 @@ namespace MultiAtendimento.API.Hubs
             catch (Exception ex)
             {
                 await Clients.Caller.SendAsync("EventoDeErro", "Erro ao iniciar o chat tente novamente");
+            }
+        }
+
+        public async Task EnviarMensagemCliente(EnviarMensagemClienteInput enviarMensagemClienteInput)
+        {
+            try
+            {
+                var securityToken = TokenService.ObterTokenValido(enviarMensagemClienteInput.Token);
+
+                var empresaCnpj = securityToken.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj")).Value;
+                var chatId = securityToken.Claims.FirstOrDefault(c => c.Type.Equals("chatId")).Value;
+
+                var mensagem = new Mensagem
+                {
+                    ChatId = int.Parse(chatId),
+                    Conteudo = enviarMensagemClienteInput.Conteudo,
+                    EmpresaCnpj = empresaCnpj
+                };
+
+                _chatService.AdicionarMensagem(mensagem);
+
+                await Clients.OthersInGroup(chatId).SendAsync("MensagemRecebida", mensagem);
+            }
+            catch (SecurityTokenException exception)
+            {
+                await Clients.Caller.SendAsync("EventoDeErro", exception.Message);
+            }
+            catch (Exception ex)
+            {
+                await Clients.Caller.SendAsync("EventoDeErro", "Chat expirado necessário criar um novo");
             }
         }
 

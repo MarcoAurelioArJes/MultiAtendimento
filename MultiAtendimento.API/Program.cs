@@ -49,12 +49,7 @@ builder.Services
        {
            opcs.RequireHttpsMetadata = true;
            opcs.SaveToken = true;
-           opcs.TokenValidationParameters = new TokenValidationParameters
-           {
-               IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(TokenService.PrivateKey)),
-               ValidateIssuer = false,
-               ValidateAudience = false
-           };
+           opcs.TokenValidationParameters = TokenService.ObterParametrosDoToken();
 
            opcs.Events = new JwtBearerEvents
            {
@@ -96,6 +91,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<ChatHub>("/chat");
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

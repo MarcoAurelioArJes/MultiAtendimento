@@ -15,6 +15,10 @@ namespace MultiAtendimento.API.Services
             CreateMap<UsuarioInput, Usuario>();
 
             CreateMap<AtualizarUsuarioInput, Usuario>();
+            
+            CreateMap<Chat, ChatView>();
+
+            CreateMap<Mensagem, MensagemView>();
         }
     }
 }
