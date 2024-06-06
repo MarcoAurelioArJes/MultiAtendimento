@@ -20,6 +20,6 @@ namespace MultiAtendimento.API.Models
         public Setor? Setor { get; set; }
         public Cliente Cliente { get; set; }
 
-        public List<Mensagem> Mensagens { get; set; }
+        public List<Mensagem> Mensagens { get; set; } = new List<Mensagem>();
     }
 }

@@ -3,25 +3,26 @@ import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
 export default {
     obterConexao() {
         const hubConnectionBuilder = new HubConnectionBuilder()
-               .withUrl("http:localhost:9000/chatHub", { accessTokenFactory: () => localStorage.getItem("tokenDeAcesso") })
+               .withUrl("http://localhost:9000/chatHub", { accessTokenFactory: () => localStorage.getItem("tokenDeAcesso") })
                .configureLogging(LogLevel.Information);
-        
         return hubConnectionBuilder.build();
     },
-    iniciarConexao(conexao) {
+    async iniciarConexao(conexao) {
         try {
-            conexao.start()
-            .then(() => console.log("TESTE"));
+            await conexao.start();
             console.log("SignalR Connected.")
         }
         catch (erro) {
             console.log("erro:", erro);
         }
     },
-    definirEventoASerEscutado(conexao, nomeEvento, funcaoASerExecutada) {
-        conexao.on(nomeEvento, funcaoASerExecutada);
-    },
-    chamarFuncaoRemota(conexao, nomeFuncaoRemota, objetoDeEnvio) {
-        conexao.invoke(nomeFuncaoRemota, objetoDeEnvio);
-    }
+    // definirEventoASerEscutado(conexao, nomeEvento, funcaoCallASerExecutada) {
+    //     conexao.on(nomeEvento, funcaoCallASerExecutada);
+    // },
+    // chamarFuncaoRemota(conexao, nomeFuncaoRemota, objetoDeEnvio) {
+    //     if (objetoDeEnvio)
+    //         conexao.invoke(nomeFuncaoRemota, objetoDeEnvio);
+    //     else 
+    //         conexao.invoke(nomeFuncaoRemota);
+    // }
 }

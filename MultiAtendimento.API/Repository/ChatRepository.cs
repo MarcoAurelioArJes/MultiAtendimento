@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MultiAtendimento.API.Models;
+using MultiAtendimento.API.Models.Enums;
 using MultiAtendimento.API.Models.Interfaces;
 using MultiAtendimento.API.Repository.BancoDeDados;
 
@@ -23,7 +24,7 @@ namespace MultiAtendimento.API.Repository
         {
             return _dbSet
                         .Include(c => c.Mensagens)
-                        .Where(c => c.AtendenteId == idUsuario)
+                        .Where(c => c.AtendenteId == idUsuario || c.Status == StatusDoChatEnum.Nenhum)
                         .ToList();
         }
     }

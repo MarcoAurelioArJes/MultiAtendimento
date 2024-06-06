@@ -6,42 +6,70 @@ import React, { useState, useEffect } from 'react';
 import ChatList from '../../components/ChatList/page.jsx';
 import chatRepositorio from '../../repositorio/chatRepositorio.js'
 import conexaoWebSocket from '../../services/conexaoWebSocket.js'
-import {
-    HubConnection,
-    HubConnectionBuilder,
-    LogLevel,
-  } from "@microsoft/signalr";
 
 const Chats = () => {
+    let chatsContextoGlobal = [];
+    let mensagensAtuaisContextoGlobal = [];
+    let chatAtualContextoGlobal = [];
+
     const [mensagem, setMensagem] = useState("");
     const [chats, setChats] = useState([]);
     const [chatAtual, setChatAtual] = useState(null);
     const [mensagensAtuais, setMensagensAtuais] = useState(null);
-    const [conexao, setConexao] = useState(conexaoWebSocket.obterConexao());
+    const [conexao, setConexao] = useState();
     
     useEffect(() => {
-        let conexaoBuild = new HubConnectionBuilder()
-                        .withUrl("http:localhost:9000/chatHub", { accessTokenFactory: () => localStorage.getItem("tokenDeAcesso") })
-                        .withAutomaticReconnect()
-                        .configureLogging(LogLevel.Information)
-                        .build();
-    setConexao(conexaoBuild);
-    conexao
-      .start()
-      .then(() => {
-        console.log("CONECTADO")
-      })
+        async function iniciarConexao() {
+            let conexaoInicial = conexaoWebSocket.obterConexao();
+            console.log(conexaoInicial)
+            await conexaoWebSocket.iniciarConexao(conexaoInicial);
+            setConexao(conexaoInicial);
+            conexaoInicial.invoke("VincularAUmGrupoDeChats");
 
-      .catch((err) =>
-        console.error("Error while connecting to SignalR Hub:", err)
-      );
+            definirEventosASeremEscutados(conexaoInicial);
+        }
+        iniciarConexao();
 
         async function obterChats() {
             let chats = await chatRepositorio.obterTodos();
             setChats(chats);
+            
+            if (chatsContextoGlobal.length > 0)
+                chatsContextoGlobal = [];
+
+            chatsContextoGlobal.push(...chats)
         }
         obterChats()
-    },[conexao])
+    }, [])
+
+    const definirEventosASeremEscutados = (conexao) => {
+        conexao.on("MensagemRecebida", handleMensagemRecebida)
+        conexao.on("MensagemEnviada", handleMensagemEnviada)
+
+        conexao.on("ChatCriado", (chat) => {
+            setChats([...chats, chat])
+        })
+    }
+
+    const handleMensagemRecebida = (mensagem) => {
+        let indexChatQueRecebeuAMensagem = chatsContextoGlobal.findIndex(chat => chat.id == mensagem.chatId);
+        chatsContextoGlobal[indexChatQueRecebeuAMensagem].mensagens.push(mensagem);
+        setChats(chatsContextoGlobal)
+
+        let indexMensagensAtuaisContextoGlobal = mensagensAtuaisContextoGlobal.findIndex(mensagemAtual => mensagemAtual.chatId == mensagem.chatId);
+        mensagensAtuaisContextoGlobal[indexMensagensAtuaisContextoGlobal].push(mensagem);
+        setMensagensAtuais(mensagensAtuaisContextoGlobal)
+
+        console.log(mensagensAtuaisContextoGlobal)
+    }
+
+    const handleMensagemEnviada = (mensagem) => {
+        let indexMensagensAtuaisContextoGlobal = mensagensAtuaisContextoGlobal.findIndex(mensagemAtual => mensagemAtual.chatId == mensagem.chatId);
+        mensagensAtuaisContextoGlobal[indexMensagensAtuaisContextoGlobal].push(mensagem);
+        setMensagensAtuais(mensagensAtuaisContextoGlobal)
+
+        console.log(mensagensAtuaisContextoGlobal)
+    }
 
     const handleAoDigitarMensagem = (event) => {
         setMensagem(event.target.value)
@@ -49,9 +77,12 @@ const Chats = () => {
 
     const handleEnviarMensagem = () => {
         const novaMensagem = {
-            id: 2,
+            chatId: chatAtual.id,
             conteudo: mensagem
         }
+        console.log("EnviarMensagem", chats)
+        conexao.invoke("EnviarMensagem", novaMensagem);
+
         chatAtual.mensagens.push(novaMensagem)
         setMensagensAtuais(chatAtual.mensagens)
         setChatAtual(chatAtual)
@@ -62,6 +93,13 @@ const Chats = () => {
         setChatAtual(chat);
         setMensagensAtuais(chat.mensagens);
         setChats(chats);
+
+        if (mensagensAtuaisContextoGlobal.length > 0)
+            mensagensAtuaisContextoGlobal = [];
+
+        mensagensAtuaisContextoGlobal.push(chat.mensagens)
+
+        conexao.invoke("VincularAUmChat", chat.id);
     };
 
     return (

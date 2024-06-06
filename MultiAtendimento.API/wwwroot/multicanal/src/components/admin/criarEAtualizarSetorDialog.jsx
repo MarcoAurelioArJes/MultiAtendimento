@@ -1,52 +1,42 @@
 import { useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import setorRepositorio from '@/repositorio/setorRepositorio';
+import { toast } from 'react-hot-toast';
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
-export default function UpdateCreateSectorDialog({ onClose, sector, updateSector, mode }) {
-    const [formData, setFormData] = useState(
-        mode === 'update' ? { ...sector } : { name: '' }
-    );
+export default function CriarEAtualizarSetorDialog({ aoFechar, setor, atualizarSetor, mode }) {
+    const dadosFormularioPadrao = { nome: '' };
+    const [dadosDoFormulario, setDadosDoFormulario] = useState(mode === 'atualizar' ? { ...setor } : { nome: '' });
 
-    const handleInputChange = (e) => {
+    const handleAoMudarOValorDoInput = (e) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-
-    const handleSubmit = () => {
-        const url = mode === 'update' ? `/api/sectors/${sector.id}` : '/api/sectors';
-        const method = mode === 'update' ? 'PUT' : 'POST';
-
-        fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then((data) => {
-                updateSector(data);
-                onClose();
-            })
-            .catch((error) => {
-                console.error('Error updating sector:', error);
-            });
-    };
+        setDadosDoFormulario((dadosDoFormulario) => ({...dadosDoFormulario, [name]: value,}));
+      };
+    
+      const handleCriarSetor = async () => {
+        try {
+          const dadosSetor = {
+            ...dadosDoFormulario
+          };
+      
+          await mode === 'atualizar' ? setorRepositorio.atualizar(dadosSetor.id, dadosSetor) : setorRepositorio.criar(dadosSetor);
+    
+          setDadosDoFormulario(dadosFormularioPadrao);
+          toast.success("Setor cadastrado com sucesso!!!");
+          atualizarSetor(dadosSetor);
+          aoFechar();
+        }
+        catch (erro) {
+          toast.error(erro.message)
+        }
+      };
 
     return (
         <Transition show={true}>
-            <Dialog className="relative z-10" onClose={onClose}>
+            <Dialog className="relative z-10" onClose={aoFechar}>
                 <Transition.Child
                     enter="ease-out duration-300"
                     enterFrom="opacity-0"
@@ -83,10 +73,10 @@ export default function UpdateCreateSectorDialog({ onClose, sector, updateSector
                                                         </label>
                                                         <input
                                                             type="text"
-                                                            name="name"
-                                                            id="name"
-                                                            value={formData.name}
-                                                            onChange={handleInputChange}
+                                                            name="nome"
+                                                            id="nome"
+                                                            value={dadosDoFormulario.nome}
+                                                            onChange={handleAoMudarOValorDoInput}
                                                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                                         />
                                                     </div>
@@ -99,14 +89,14 @@ export default function UpdateCreateSectorDialog({ onClose, sector, updateSector
                                     <button
                                         type="button"
                                         className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
-                                        onClick={handleSubmit}
+                                        onClick={handleCriarSetor}
                                     >
                                         Enviar
                                     </button>
                                     <button
                                         type="button"
                                         className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                                        onClick={onClose}
+                                        onClick={aoFechar}
                                         data-autofocus
                                     >
                                         Cancelar
