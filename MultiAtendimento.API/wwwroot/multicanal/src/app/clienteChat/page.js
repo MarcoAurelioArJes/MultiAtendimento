@@ -5,6 +5,7 @@ import MenuSetor from "../../components/clienteChat/menuSetor";
 import setorRepositorio from '../../repositorio/setorRepositorio';
 
 export default function Chat() {
+    let cnpjEmpresa = "12345678912234"
     const [isOpen, setIsOpen] = useState(false);
     const [cliente, setCliente] = useState({ nome: "", cnpj: "" });
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -22,6 +23,14 @@ export default function Chat() {
         setCliente({ nome: "", cnpj: "" });
         setSetores([]);
     };
+
+    useEffect(() => {
+        async function obterChats() {
+            const setoresData = await setorRepositorio.obterSetoresPorCnpj(cnpjEmpresa);
+            setSetores(setoresData);
+        }
+        obterChats()
+    }, [])
 
     const handleSubmit = async () => {
         if (cliente.nome && cliente.cnpj && !isSubmitted) {

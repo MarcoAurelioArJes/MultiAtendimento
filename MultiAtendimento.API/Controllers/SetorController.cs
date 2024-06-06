@@ -59,5 +59,20 @@ namespace MultiAtendimento.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet("obterSetoresPorCnpj/{cnpj}")]
+        public IActionResult ObterSetoresPorCnpj(string cnpj)
+        {
+            try
+            {
+                var setores = _setorService.ObterSetoresPorCnpj(cnpj);
+                return Ok(setores);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

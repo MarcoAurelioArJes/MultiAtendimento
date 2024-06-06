@@ -53,5 +53,10 @@ namespace MultiAtendimento.API.Services
             var empresaCnpj = _httpContext.HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj"))?.Value;
             return _setorRepository.ObterTodosPorCnpjDaEmpresa(empresaCnpj);
         }
+
+        public List<Setor> ObterSetoresPorCnpj(string cnpj)
+        {
+            return _setorRepository.ObterTodosPorCnpjDaEmpresa(cnpj);
+        }
     }
 }

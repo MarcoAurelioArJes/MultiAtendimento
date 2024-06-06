@@ -21,6 +21,15 @@ export default {
 
         return respostaBody;
     },
+    async obterSetoresPorCnpj(cnpj) {
+        let respostaHttp = await apiService.requisicao({endpoint: `${baseEndpoint}/obterSetoresPorCnpj/${cnpj}`, verboHttp: "GET"})
+        
+        let respostaBody = await apiService.resposta(respostaHttp);
+        
+        //if (!respostaHttp.ok) throw new Error(respostaBody);
+
+        return respostaBody;
+    },
     async obterPorId(id) {
         let respostaHttp = await apiService.requisicao({endpoint: `${baseEndpoint}/obterUsuarios/${id}`, verboHttp: "GET"});
         
