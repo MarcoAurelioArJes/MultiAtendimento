@@ -56,7 +56,7 @@ export default function ListaDeSetores() {
             <div className="mx-auto max-w-4xl">
                 <h1 className='text-black mb-4 font-extrabold text-2xl'> Setores </h1>
                 <ul role="list" className="divide-y divide-gray-100">
-                    {setores.map((setor) => (
+                    {setores ? setores.map((setor) => (
                         <li key={setor.id} className="flex justify-between gap-x-6 py-5">
                             <div className="flex min-w-0 gap-x-4">
                                 <div className="min-w-0 flex-auto">
@@ -82,7 +82,9 @@ export default function ListaDeSetores() {
                                 </button>
                             </div>
                         </li>
-                    ))}
+                    )) : 
+                    <li></li>
+                    }
                     <li className="flex justify-end gap-x-6 py-5 text-white">
                         <div className="flex gap-x-4">
                             <button

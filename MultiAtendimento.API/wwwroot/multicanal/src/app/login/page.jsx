@@ -2,33 +2,36 @@
 import Navbar from '../../components/navBar/navBarExterna';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import usuarioRepositorio from '../../repositorio/usuarioRepositorio.js'
-
+import usuarioRepositorio from '../../repositorio/usuarioRepositorio.js';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
-  const [email, setEmail] = useState();
-  const [senha, setSenha] = useState();
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const router = useRouter();
 
   const objeto = {
     email: email,
     senha: senha
-  }
+  };
 
   const entrar = (e) => {
     e.preventDefault();
     usuarioRepositorio.entrar(objeto)
     .then((res) => {
-      localStorage.setItem("tokenDeAcesso", res.tokenDeAcesso);
-      toast.success("Login efetuado sucesso!!!");
+      Cookies.set("tokenDeAcesso", res.tokenDeAcesso, { expires: 1 });
+      toast.success("Login efetuado com sucesso!!!");
+      router.push('/chats');
     })
     .catch(error => {
-      toast.error(error.message)
-    })
-  }
+      toast.error(error.message);
+    });
+  };
 
   return (
     <>
-      <Navbar></Navbar>
+      <Navbar />
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
@@ -42,7 +45,7 @@ export default function Login() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST" onSubmit={entrar}>
+          <form className="space-y-6" onSubmit={entrar}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                 Email
@@ -98,5 +101,5 @@ export default function Login() {
         </div>
       </div>
     </>
-  )
+  );
 }

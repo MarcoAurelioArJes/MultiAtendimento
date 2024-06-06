@@ -1,11 +1,15 @@
-let baseUrl = "http://localhost:9000"
+import Cookies from 'js-cookie';
+
+let baseUrl = "http://localhost:5275"
 export default {
         async requisicao({endpoint = "", verboHttp, body = {}}) {
+            let tokenDeAcesso = Cookies.get('tokenDeAcesso');
+
             let corpoRequisicao = {
                 method: verboHttp,
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("tokenDeAcesso")}`
+                    "Authorization": `Bearer ${tokenDeAcesso}`
                 }
             }
 
