@@ -27,14 +27,13 @@ export default function CriarEAtualizarDialog({ aoFechar, usuario, atualizarUsua
   },[])
 
   const dadosFormularioPadrao = { nome: '', email: '', senha: '', setorId: 0, cargo: 0 };
+  const [dadosDoFormulario, setDadosDoFormulario] = useState(mode === 'atualizar' ? { ...usuario } : dadosFormularioPadrao);
   const [setores, setSetores] = useState([]);
   const [setorSelecionado, setSetorSelecionado] = useState();
   const [cargoSelecionado, setCargoSelecionado] = useState();
-  const [dadosDoFormulario, setDadosDoFormulario] = useState(mode === 'atualizar' ? { ...usuario } : dadosFormularioPadrao);
 
   const handleAoMudarOValorDoInput = (e) => {
     const { name, value } = e.target;
-    console.log(name, value)
     setDadosDoFormulario((dadosDoFormulario) => ({...dadosDoFormulario, [name]: value,}));
   };
 

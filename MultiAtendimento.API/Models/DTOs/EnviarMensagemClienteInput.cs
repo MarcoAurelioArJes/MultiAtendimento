@@ -1,8 +1,8 @@
 ﻿namespace MultiAtendimento.API.Models.DTOs
 {
-    public class EnviarMensagemInput
+    public class EnviarMensagemClienteInput
     {
-        public int ChatId { get; set; }
+        public string Token { get; set; }
         public string Conteudo { get; set; }
     }
 }

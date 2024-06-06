@@ -5,9 +5,7 @@ namespace MultiAtendimento.API.Models
 {
     public class Chat : BaseModel
     {
-        public Guid ChatId { get; } = Guid.NewGuid();
         public StatusDoChatEnum Status { get; set; }
-
 
         [ForeignKey(nameof(Empresa))]
         public string EmpresaCnpj { get; set; }
@@ -21,5 +19,7 @@ namespace MultiAtendimento.API.Models
         public Usuario? Atendente { get; set; }
         public Setor? Setor { get; set; }
         public Cliente Cliente { get; set; }
+
+        public List<Mensagem> Mensagens { get; set; } = new List<Mensagem>();
     }
 }
