@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 const rotasPrivadas = ['/chats', '/admin'];
 
 export function middleware(request) {
-  const token = request.localStorage.getItem('tokenDeAcesso');
+  const token = request.cookies.get('tokenDeAcesso');
 
   if (rotasPrivadas.includes(request.nextUrl.pathname) && !token) {
     return NextResponse.redirect(new URL('/login', request.url));
