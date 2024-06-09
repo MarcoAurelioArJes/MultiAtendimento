@@ -14,5 +14,6 @@ namespace MultiAtendimento.API.Models.DTOs
         public int ClienteId { get; set; }
 
         public List<MensagemView> Mensagens { get; set; }
+        public ClienteView Cliente { get; set; }
     }
 }

@@ -4,8 +4,8 @@ import './style.css'
 import Navbar from '../../components/navBar/navBar';
 import React, { useState, useEffect, useRef } from 'react';
 import ChatList from '../../components/ChatList/page.jsx';
-import chatRepositorio from '../../repositorio/chatRepositorio.js'
-import conexaoWebSocket from '../../services/conexaoWebSocket.js'
+import chatRepositorio from '../../repositorio/chatRepositorio.js';
+import conexaoWebSocket from '../../services/conexaoWebSocket.js';
 
 export default function Chats() {
     const [mensagem, setMensagem] = useState("");
@@ -25,13 +25,14 @@ export default function Chats() {
             setConexao(conexaoInicial);
             conexaoInicial.invoke("VincularAUmGrupoDeChats");
 
-            definirEventosASeremEscutados.bind(this)(conexaoInicial);
+            definirEventosASeremEscutados(conexaoInicial);
         }
         iniciarConexao();
 
         async function obterChats() {
             chatsRef.current = await chatRepositorio.obterTodos();
             setChats(chatsRef.current);
+            console.log(chatsRef.current)
         }
         obterChats()
     }, [])
@@ -110,7 +111,7 @@ export default function Chats() {
                     {chatAtual && (
                         <>
                             <div className="chat-header">
-                                {chatAtual.clienteId}
+                                {chatAtual.cliente.nome}
                             </div>
                             <div className="messages">
                                 {mensagensAtuais.map((mensagem) => (

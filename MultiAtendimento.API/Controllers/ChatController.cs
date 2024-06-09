@@ -21,7 +21,11 @@ namespace MultiAtendimento.API.Controllers
             try
             {
                 var idUsuario = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "id").Value;
-                var chats = _chatService.ObterChatsDoUsuarioLogado(int.TryParse(idUsuario, out int resultado) ? resultado : 0);
+                var setorId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "setorId").Value;
+                int idUsuarioInt = int.TryParse(idUsuario, out int resultadoIdUsuario) ? resultadoIdUsuario : 0;
+                int setorIdInt = int.TryParse(idUsuario, out int resultadoSetorId) ? resultadoSetorId : 0;
+
+                var chats = _chatService.ObterChatsDoUsuarioLogado(idUsuarioInt, setorIdInt);
                 return Ok(chats);
             }
             catch (Exception ex)

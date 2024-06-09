@@ -71,6 +71,7 @@ namespace MultiAtendimento.API.Hubs
                 var mensagemView = _mapper.Map<MensagemView>(mensagem);
 
                 await Clients.OthersInGroup(chatId).SendAsync("MensagemRecebida", mensagemView);
+                await Clients.Caller.SendAsync("MensagemAtualEnviada", mensagemView);
             }
             catch (SecurityTokenException exception)
             {

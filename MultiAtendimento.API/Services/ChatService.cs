@@ -39,9 +39,9 @@ namespace MultiAtendimento.API.Services
             _chatRepository.AdicionarMensagem(mensagem);
         }
 
-        public List<ChatView> ObterChatsDoUsuarioLogado(int idUsuario)
+        public List<ChatView> ObterChatsDoUsuarioLogado(int idUsuario, int setorId)
         {
-            var listaDeChats = _mapper.Map<List<ChatView>>(_chatRepository.ObterChatsDoUsuario(idUsuario));
+            var listaDeChats = _mapper.Map<List<ChatView>>(_chatRepository.ObterChatsDoUsuario(idUsuario, setorId));
             return listaDeChats;
         }
     }
