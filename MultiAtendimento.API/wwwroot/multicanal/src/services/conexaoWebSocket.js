@@ -1,9 +1,10 @@
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
+import Cookies from 'js-cookie';
 
 export default {
     obterConexao() {
         const hubConnectionBuilder = new HubConnectionBuilder()
-               .withUrl("http://localhost:9000/chatHub", { accessTokenFactory: () => localStorage.getItem("tokenDeAcesso") })
+               .withUrl("http://localhost:9000/chatHub", { accessTokenFactory: () => Cookies.get("tokenDeAcesso") })
                .configureLogging(LogLevel.Information);
         return hubConnectionBuilder.build();
     },

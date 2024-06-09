@@ -42,7 +42,7 @@ namespace MultiAtendimento.API.Hubs
                 var token = TokenService.ObterTokenDoClientePorChat(chat);
                 await Clients.Caller.SendAsync("TokenDoCliente", token);
 
-                await Clients.Group($"{chat.Setor.Empresa.Cnpj}_{chat.Setor.Nome.Replace(" ", "")}").SendAsync("ChatCriado", chat);
+                await Clients.OthersInGroup($"{chat.Setor.Empresa.Cnpj}_{chat.Setor.Nome.Replace(" ", "")}").SendAsync("ChatCriado", chat);
             }
             catch (Exception ex)
             {
@@ -99,6 +99,7 @@ namespace MultiAtendimento.API.Hubs
             var mensagemView = _mapper.Map<MensagemView>(mensagem);
 
             await Clients.OthersInGroup(enviarMensagemInput.ChatId.ToString()).SendAsync("MensagemRecebida", mensagemView);
+            await Clients.Caller.SendAsync("MensagemAtualEnviada", mensagemView);
         }
 
         [Authorize]

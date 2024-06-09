@@ -32,13 +32,17 @@ namespace MultiAtendimento.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("Entrar")]
+        [HttpPost("entrar")]
         public IActionResult Entrar([FromBody] EntrarInput entrarInput)
         {
             try
             {
                 var retorno = _usuarioService.Entrar(entrarInput);
                 return Ok(retorno);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return StatusCode(ex.StatusCode, new { mensagemDeErro = ex.Message });
             }
             catch (Exception ex)
             {
