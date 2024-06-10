@@ -7,7 +7,7 @@ export default {
         let resultado = await apiService.resposta(respostaHttp);
 
         if (!respostaHttp.ok)
-            throw new Error(resultado.mensagemDeErro)
+            throw new Error(JSON.stringify(resultado))
 
         return resultado;
     },
@@ -16,24 +16,24 @@ export default {
 
         let resultado = await apiService.resposta(respostaHttp);
 
-        if (!respostaHttp.ok) {
-        validaCampos.defineCampoDeErroDaApi.bind(this)({nomePropriedade: resultado.value.nomePropriedade, 
-            mensagem: resultado.value.mensagemErro});
-        }
+        if (!respostaHttp.ok) 
+            throw new Error(JSON.stringify(resultado))
     },
     async obterUsuarios() {
         let respostaHttp = await apiService.requisicao({endpoint: `${baseEndpoint}/obterUsuarios`, verboHttp: "GET"})
         
         let respostaBody = await apiService.resposta(respostaHttp);
         
-        //if (!respostaHttp.ok) throw new Error(respostaBody);
+        if (!respostaHttp.ok) 
+            throw new Error(JSON.stringify(resultado))
 
         return respostaBody;
     },
     async obterPorId(id) {
         let respostaHttp = await apiService.requisicao({endpoint: `${baseEndpoint}/obterUsuarios/${id}`, verboHttp: "GET"});
         
-        if (!respostaHttp.ok) mensagensDeErro.mensagensDeErro(dadosRetornados.value);
+        if (!respostaHttp.ok) 
+            throw new Error(JSON.stringify(resultado))
 
         let resultado = await apiService.resposta(respostaHttp);      
         
@@ -44,10 +44,8 @@ export default {
 
         let resultado = await apiService.resposta(respostaHttp);
         
-        if (!respostaHttp.ok) {
-            validaCampos.defineCampoDeErroDaApi.bind(this)({nomePropriedade: resultado.value.nomePropriedade, 
-                mensagem: resultado.value.mensagemErro});
-        }
+        if (!respostaHttp.ok) 
+            throw new Error(JSON.stringify(resultado))
     }
     // ,
     // async deletar(id) {

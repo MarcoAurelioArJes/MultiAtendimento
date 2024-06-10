@@ -7,7 +7,8 @@ export default {
         
         let respostaBody = await apiService.resposta(respostaHttp);
         
-        //if (!respostaHttp.ok) throw new Error(respostaBody);
+        if (!respostaHttp.ok) 
+            throw new Error(JSON.stringify(resultado))
 
         return respostaBody;
     }

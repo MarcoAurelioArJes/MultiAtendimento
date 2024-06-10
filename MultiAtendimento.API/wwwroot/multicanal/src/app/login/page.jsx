@@ -28,8 +28,17 @@ export default function Login() {
       router.push('/chats');
     })
     .catch(erro => {
-      toast.error(erro.message);
-    });
+      let erroJson = JSON.parse(erro.message);
+
+      if (Object.keys(erroJson.resultado).length === 0) {
+        toast.error(erroJson.mensagem)
+        return;
+      }
+      erroJson.resultado.forEach(result => {
+        toast.error(result.mensagem, { id: result.campo })
+      });
+
+    })
   };
 
   return (

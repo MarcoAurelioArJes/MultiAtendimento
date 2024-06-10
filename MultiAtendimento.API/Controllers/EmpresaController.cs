@@ -2,6 +2,7 @@
 using MultiAtendimento.API.Models.DTOs;
 using MultiAtendimento.API.Models.Interfaces;
 using MultiAtendimento.API.Services;
+using System.Net;
 
 namespace MultiAtendimento.API.Controllers
 {
@@ -23,9 +24,19 @@ namespace MultiAtendimento.API.Controllers
                 _empresaService.Criar(primeiroCadastroInput);
                 return Created();
             }
+            catch (BadHttpRequestException badHttpRequestException)
+            {
+                return StatusCode(badHttpRequestException.StatusCode, new RetornoPadraoView<object>
+                {
+                    Mensagem = badHttpRequestException.Message
+                });
+            }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode((int)HttpStatusCode.BadRequest, new RetornoPadraoView<object>
+                {
+                    Mensagem = ex.Message
+                });
             }
         }
     }

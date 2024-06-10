@@ -28,6 +28,13 @@ namespace MultiAtendimento.API.Services
 
             _setorRepository.Criar(setor);
         }
+        
+        public Setor CriarSetorNoCadastroEmpresa(SetorCadastroEmpresaInput setorInput)
+        {
+            var setor = _mapper.Map<Setor>(setorInput);
+
+            return _setorRepository.Criar(setor);
+        }
 
         public void Atualizar(int id, SetorInput setorInput)
         {

@@ -9,18 +9,20 @@ namespace MultiAtendimento.API.Services
         public MapperService() 
         {
             CreateMap<SetorInput, Setor>();
+            CreateMap<SetorCadastroEmpresaInput, Setor>();
 
             CreateMap<ClienteInput, Cliente>();
+            
+            CreateMap<Cliente, ClienteView>();
 
             CreateMap<UsuarioInput, Usuario>();
+            CreateMap<UsuarioCadastroEmpresaInput, Usuario>();
 
             CreateMap<AtualizarUsuarioInput, Usuario>();
             
             CreateMap<Chat, ChatView>();
 
             CreateMap<Mensagem, MensagemView>();
-
-            CreateMap<Cliente, ClienteView>();
         }
     }
 }

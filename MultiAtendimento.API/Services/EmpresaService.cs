@@ -9,18 +9,20 @@ namespace MultiAtendimento.API.Services
     public class EmpresaService
     {
         private readonly IEmpresaRepository _empresaRepository;
-        private readonly IUsuarioRepository _usuarioRepository;
-        private readonly ISetorRepository _setorRepository;
+        private readonly UsuarioService _usuarioService;
+        private readonly SetorService _setorService;
 
-        public EmpresaService(IEmpresaRepository empresaRepository, IUsuarioRepository usuarioRepository, ISetorRepository setorRepository)
+        public EmpresaService(IEmpresaRepository empresaRepository, UsuarioService usuarioService, SetorService setorService)
         {
             _empresaRepository = empresaRepository;
-            _usuarioRepository = usuarioRepository;
-            _setorRepository = setorRepository;
+            _usuarioService = usuarioService;
+            _setorService = setorService;
         }
 
         public void Criar(CadastroEmpresaInput cadastroEmpresaInput)
         {
+            _usuarioService.LancarExcecaoCasoEmailJaExista(cadastroEmpresaInput.Email);
+
             var empresaExiste = _empresaRepository.ObterEmpresaPorCnpj(cadastroEmpresaInput.Cnpj) != null;
             if (empresaExiste)
                 throw new BadHttpRequestException("CNPJ já cadastrado no sistema, tente realizar login utilizando o usuário admin");
@@ -32,24 +34,24 @@ namespace MultiAtendimento.API.Services
             };
             _empresaRepository.Criar(empresa);
 
-            var setor = new Setor
+            var setor = new SetorCadastroEmpresaInput
             {
                 EmpresaCnpj = empresa.Cnpj,
                 Nome = "Admin"
             };
-            _setorRepository.Criar(setor);
+            var setorDb = _setorService.CriarSetorNoCadastroEmpresa(setor);
 
-            var usuario = new Usuario
+            var usuario = new UsuarioCadastroEmpresaInput
             {
                 Nome = cadastroEmpresaInput.NomeUsuario,
                 Senha = HashDeSenhaService.ObterSenhaHash(cadastroEmpresaInput.Senha),
                 EmpresaCnpj = cadastroEmpresaInput.Cnpj,
                 Email = cadastroEmpresaInput.Email,
                 Cargo = CargoEnum.ADMIN,
-                SetorId = setor.Id,
+                SetorId = setorDb.Id,
                 AdministradorPrincipal = true
             };
-            _usuarioRepository.Criar(usuario);
+            _usuarioService.CriarUsuarioNoCadastroEmpresa(usuario);
         }
     }
 }
