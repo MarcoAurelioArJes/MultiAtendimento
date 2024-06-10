@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 
-let baseUrl = "http://localhost:9000"
+let baseUrl = "http://localhost:5275"
 export default {
         async requisicao({endpoint = "", verboHttp, body = {}}) {
             let tokenDeAcesso = Cookies.get('tokenDeAcesso');

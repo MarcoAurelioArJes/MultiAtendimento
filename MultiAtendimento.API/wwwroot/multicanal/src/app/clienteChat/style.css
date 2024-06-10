@@ -1,0 +1,106 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.open-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #008CBA;
+    color: white;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+    text-align: center;
+}
+
+.chat-popup {
+    position: fixed;
+    bottom: 0;
+    right: 20px;
+    border-top: 3px solid #f1f1f1;
+    z-index: 9;
+    max-width: 500px;
+    max-height: 200px;
+    min-height: 320px;
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    background-color: white;
+}
+
+.chat-header {
+    background-color: #008CBA;
+    color: white;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h2 {
+    margin: 0;
+}
+
+.chat-header .close {
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.chat-body {
+    height: 13rem;
+    padding: 15px;
+    background-color: white;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.chat-footer {
+    padding: 10px;
+    background-color: #f1f1f1;
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    min-width: 100%;
+}
+
+.chat-footer button {
+    background-color: #008CBA;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.no-select {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.caixaDeMensagens {
+    min-width: 20rem;
+    max-height: 100%;
+    overflow-y: scroll;
+}
+
+.mensagem {
+    margin: 0.5rem;
+    padding: 0.5rem;
+}
+
+.mensagemMinha {
+    background-color: #008CBA;
+    border-radius: 0.75rem 0.75rem 0.1rem 0.75rem;
+}
+
+.mensagemDele {
+    background-color: #fef9c3;
+    color: #1f2937;
+    border-radius: 0.1rem 0.75rem 0.75rem 0.75rem;
+}
