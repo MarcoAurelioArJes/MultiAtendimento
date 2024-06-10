@@ -56,7 +56,7 @@ namespace MultiAtendimento.API.Services
             return listaDeChats;
         }
 
-        public Chat ObteChatPorId(int chatId)
+        public Chat ObterChatPorId(int chatId)
         {
             var chat = _chatRepository.ObterPorId(chatId);
             return chat;

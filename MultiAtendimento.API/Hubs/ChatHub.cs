@@ -7,6 +7,8 @@ using MultiAtendimento.API.Models;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
 using System;
+using System.Security.Claims;
+using MultiAtendimento.API.Models.Enums;
 
 namespace MultiAtendimento.API.Hubs
 {
@@ -72,7 +74,7 @@ namespace MultiAtendimento.API.Hubs
 
                 _chatService.AdicionarMensagem(mensagem);
 
-                var chat = _chatService.ObteChatPorId(chatIdInt);
+                var chat = _chatService.ObterChatPorId(chatIdInt);
 
                 var mensagemView = _mapper.Map<MensagemView>(mensagem);
 
@@ -116,11 +118,18 @@ namespace MultiAtendimento.API.Hubs
         [Authorize]
         public async Task VincularAUmGrupoDeChats()
         {
-            var empresaCnpj = Context.User.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj")).Value;
             var setorId = Context.User.Claims.FirstOrDefault(c => c.Type.Equals("setorId")).Value;
+            var idUsuario = Context.User.Claims.FirstOrDefault(c => c.Type.Equals("id")).Value;
+            var cargo = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
+
+            var chats = _chatService.ObterChatsDoUsuarioLogado(int.Parse(idUsuario), int.Parse(setorId), Enum.Parse<CargoEnum>(cargo));
+            
+            foreach (var chat in chats)
+                await Groups.AddToGroupAsync(Context.ConnectionId, chat.Id.ToString());
 
             var setor = _setorService.ObterPorId(int.Parse(setorId));
 
+            var empresaCnpj = Context.User.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj")).Value;
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{empresaCnpj}_{setor.Nome.Replace(" ", "")}");
         }
 
