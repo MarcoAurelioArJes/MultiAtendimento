@@ -3,16 +3,16 @@ import MenuSetor from "../../components/clienteChat/menuSetor";
 import setorRepositorio from '@/repositorio/setorRepositorio';
 import conexaoWebSocket from '../../services/conexaoWebSocket.js'
 
-const CNPJ = "12345678901234";
+//const CNPJ = "987654321";
 
-export default function formularioCliente({ setCliente, setChatIniciado, setConexao }) {
+export default function formularioCliente({ setCliente, setChatIniciado, setConexao, cnpj }) {
 
     const [setores, setSetores] = useState([{id: 0, nome: ""}]);
     const [nome, setNome] = useState("");
     const [setorSelecionado, setSetorSelecionado] = useState(setores[0]);
 
     useEffect(() => {
-        setorRepositorio.obterSetoresPorCnpj(CNPJ).then(data => setSetores(data))
+        setorRepositorio.obterSetoresPorCnpj(cnpj).then(data => setSetores(data))
     }, [])
 
     const pegarNome = (e) => {
@@ -20,7 +20,7 @@ export default function formularioCliente({ setCliente, setChatIniciado, setCone
     }
 
     const enviar = async () => {
-        const cliente = {nome: nome, empresaCnpj: CNPJ , setorId: setorSelecionado.id};
+        const cliente = {nome: nome, empresaCnpj: cnpj , setorId: setorSelecionado.id};
 
         const conexaoInstanciada = await obterConexaoInstanciada();
         conexaoInstanciada.invoke("IniciarChat", cliente)

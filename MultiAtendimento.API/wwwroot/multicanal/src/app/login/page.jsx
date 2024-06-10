@@ -20,7 +20,10 @@ export default function Login() {
     e.preventDefault();
     usuarioRepositorio.entrar(objeto)
     .then((res) => {
-      Cookies.set("tokenDeAcesso", res.tokenDeAcesso, { expires: 1 });
+      console.log(res)
+      Cookies.set("tokenDeAcesso", res.tokenDeAcesso, { expires: 1});
+      Cookies.set("nomeUsuario", res.nomeUsuario);
+      Cookies.set("cargoUsuario", res.cargoUsuario);
       toast.success("Login efetuado com sucesso!!!");
       router.push('/chats');
     })

@@ -4,13 +4,15 @@ import "./style.css";
 import React, { useState } from 'react';
 import FormularioCliente from '@/components/clienteChat/formularioCliente';
 import CaixaDeMensagens from "@/components/clienteChat/caixaDeMensagens";
+import { useParams } from 'next/navigation'
 
-export default function Chat() {
+const ClienteChat = () => {
 
     const [aberto, setAberto] = useState(false);
     const [cliente, setCliente] = useState({ nome: "", setor: 0 });
     const [chatIniciado, setChatIniciado] = useState(false);
     const [conexao, setConexao] =  useState();
+    const params = useParams()
 
     const abreChat = () => {
         setAberto(true);
@@ -39,6 +41,7 @@ export default function Chat() {
                         setCliente={setCliente}
                         setChatIniciado={setChatIniciado}
                         setConexao={setConexao}
+                        cnpj={params.cnpj}
                     />
                 }
             </div>
@@ -47,4 +50,4 @@ export default function Chat() {
     );
 }
 
-
+export default ClienteChat;

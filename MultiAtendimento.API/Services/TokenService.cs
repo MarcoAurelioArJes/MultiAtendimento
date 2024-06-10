@@ -29,7 +29,9 @@ namespace MultiAtendimento.API.Services
             {
                 TokenDeAcesso = jwtHandler.WriteToken(jwtToken),
                 TipoDoToken = "Bearer",
-                ExpiraEm = jwtToken.Payload.ValidTo
+                ExpiraEm = jwtToken.Payload.ValidTo,
+                NomeUsuario = usuario.Nome,
+                CargoUsuario = usuario.Cargo
             };
 
             return entrarView;

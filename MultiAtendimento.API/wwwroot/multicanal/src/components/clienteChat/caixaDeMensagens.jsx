@@ -23,12 +23,11 @@ export default function caixaDeMensagens({ conexao }) {
     }
 
     const handleMensagemRecebida = (mensagemRecebida) => {
-        mensagemRecebida.remetente = 0;
         setMensagens(mensagensAntigas => [...mensagensAntigas, mensagemRecebida]);
+
     }
 
     const handleMensagemAtualEnviada = (mensagemRecebida) => {
-        mensagemRecebida.remetente = 1;
         setMensagens(mensagensAntigas => [...mensagensAntigas, mensagemRecebida]);
     }
 
@@ -48,14 +47,6 @@ export default function caixaDeMensagens({ conexao }) {
     const pegaMensageDigitada = (e) => {
         setMensagemDigitada(e.target.value)
     }
-
-    // const enviarMensagem = () => {
-    //     if (mensagemDigitada.trim()) {
-    //         const novaMensagem = { remetente: 1, texto: mensagemDigitada.trim() };
-    //         setMensagens([...mensagens, novaMensagem]);
-    //         setMensagemDigitada('');
-    //     }
-    // }
 
     return (
         <>
