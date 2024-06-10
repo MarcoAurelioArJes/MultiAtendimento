@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MultiAtendimento.API.Models.Interfaces;
 using MultiAtendimento.API.Repository.BancoDeDados;
+using MultiAtendimento.API.Models.Enums;
 
 namespace MultiAtendimento.API.Repository
 {
@@ -19,13 +20,16 @@ namespace MultiAtendimento.API.Repository
             _contextoDoBancoDeDados.SaveChanges();
         }
 
-        public List<Chat> ObterChatsDoUsuario(int idUsuario, int setorId)
+        public List<Chat> ObterChatsDoUsuario(int idUsuario, int setorId, CargoEnum cargoEnum)
         {
-            return _dbSet
+            var chatsPorUsuario = _dbSet
                         .Include(c => c.Mensagens)
                         .Include(c => c.Cliente)
-                        .Where(c => (c.AtendenteId == idUsuario || c.AtendenteId == null) && c.SetorId == setorId)
-                        .ToList();
+                        .Where(c => cargoEnum == CargoEnum.ADMIN
+                                 || ((c.AtendenteId == null && c.Status == StatusDoChatEnum.Nenhum)
+                                 || (c.AtendenteId == idUsuario && c.Status == StatusDoChatEnum.Atendido && c.SetorId == setorId)));
+
+            return chatsPorUsuario.ToList();
         }
     }
 }

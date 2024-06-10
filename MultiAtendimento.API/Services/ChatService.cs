@@ -3,6 +3,8 @@ using MultiAtendimento.API.Models;
 using MultiAtendimento.API.Models.DTOs;
 using MultiAtendimento.API.Models.Enums;
 using MultiAtendimento.API.Models.Interfaces;
+using MultiAtendimento.API.Repository;
+using System.Net;
 
 namespace MultiAtendimento.API.Services
 {
@@ -39,10 +41,25 @@ namespace MultiAtendimento.API.Services
             _chatRepository.AdicionarMensagem(mensagem);
         }
 
-        public List<ChatView> ObterChatsDoUsuarioLogado(int idUsuario, int setorId)
+        public void AdicionarAtendente(int chatId, int atendenteId)
         {
-            var listaDeChats = _mapper.Map<List<ChatView>>(_chatRepository.ObterChatsDoUsuario(idUsuario, setorId));
+            var chatDb = _chatRepository.ObterPorId(chatId);
+
+            chatDb.AtendenteId = atendenteId;
+
+            _chatRepository.Atualizar(chatDb);
+        }
+
+        public List<ChatView> ObterChatsDoUsuarioLogado(int idUsuario, int setorId, CargoEnum cargoEnum)
+        {
+            var listaDeChats = _mapper.Map<List<ChatView>>(_chatRepository.ObterChatsDoUsuario(idUsuario, setorId, cargoEnum));
             return listaDeChats;
+        }
+
+        public Chat ObteChatPorId(int chatId)
+        {
+            var chat = _chatRepository.ObterPorId(chatId);
+            return chat;
         }
     }
 }

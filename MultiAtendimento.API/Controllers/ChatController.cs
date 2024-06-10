@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MultiAtendimento.API.Models.Enums;
 using MultiAtendimento.API.Services;
+using System.Security.Claims;
 
 namespace MultiAtendimento.API.Controllers
 {
@@ -22,10 +24,11 @@ namespace MultiAtendimento.API.Controllers
             {
                 var idUsuario = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "id").Value;
                 var setorId = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "setorId").Value;
+                var cargo = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value;
                 int idUsuarioInt = int.TryParse(idUsuario, out int resultadoIdUsuario) ? resultadoIdUsuario : 0;
                 int setorIdInt = int.TryParse(idUsuario, out int resultadoSetorId) ? resultadoSetorId : 0;
-
-                var chats = _chatService.ObterChatsDoUsuarioLogado(idUsuarioInt, setorIdInt);
+                CargoEnum cargoEnum = Enum.Parse<CargoEnum>(cargo);
+                var chats = _chatService.ObterChatsDoUsuarioLogado(idUsuarioInt, setorIdInt, cargoEnum);
                 return Ok(chats);
             }
             catch (Exception ex)
