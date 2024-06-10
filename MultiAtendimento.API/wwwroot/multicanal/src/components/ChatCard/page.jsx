@@ -9,8 +9,8 @@ const ChatCard = ({ chat, onClick }) => {
         >
             <div className="flex min-w-0 gap-x-4">
                 <div className="min-w-0 flex-auto">
-                    <p className="text-sm font-semibold leading-6 text-gray-900">{chat.cliente.nome}</p>
-                    {/* <p className="mt-1 truncate text-xs leading-5 text-gray-500">{chat.cliente.nome}</p> */}
+                    <p className="text-sm font-semibold leading-6 text-gray-900">{chat.clienteId}</p>
+                    <p className="mt-1 truncate text-xs leading-5 text-gray-500">{chat.ultimaMensagem}</p>
                 </div>
             </div>
         </li>
