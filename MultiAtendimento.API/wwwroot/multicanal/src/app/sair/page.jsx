@@ -11,6 +11,8 @@ export default function Sair() {
     
     useEffect(() => {
         Cookies.remove("tokenDeAcesso");
+        Cookies.remove("nomeUsuario");
+        Cookies.remove("cargoUsuario");
         router.push("/login")
         toast.success("Logout efetuado com sucesso!!!");
     }, []);

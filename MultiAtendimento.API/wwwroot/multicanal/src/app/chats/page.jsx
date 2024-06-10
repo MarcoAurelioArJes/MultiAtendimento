@@ -119,8 +119,8 @@ export default function Chats() {
                             </div>
                             <div className="messages">
                                 {mensagensAtuais.map((mensagem) => (
-                                    <div key={mensagem.id} className={`${mensagem.remetente === "ATENDENTE" ? 'posicaoMensagemMinha' : 'posicaoMensagemDele'}`}>
-                                        <p className={`message ${mensagem.remetente === "ATENDENTE" ? 'mensagemMinha' : 'mensagemDele'}`}>{mensagem.conteudo}</p>
+                                    <div key={mensagem.id} className={`${mensagem.remetente != "CLIENTE" ? 'posicaoMensagemMinha' : 'posicaoMensagemDele'}`}>
+                                        <p className={`message ${mensagem.remetente != "CLIENTE" ? 'mensagemMinha' : 'mensagemDele'}`}>{mensagem.conteudo}</p>
                                     </div>
                                 ))}
                             </div>

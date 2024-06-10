@@ -7,5 +7,7 @@ namespace MultiAtendimento.API.Models.DTOs
         public string TokenDeAcesso { get; set; }
         public string TipoDoToken { get; set; }
         public DateTime ExpiraEm { get; set; }
+        public string NomeUsuario { get; set; }
+        public CargoEnum CargoUsuario { get; set; }
     }
 }

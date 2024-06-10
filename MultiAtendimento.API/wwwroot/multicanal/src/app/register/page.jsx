@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import Navbar from '../../components/navBar/navBarExterna.jsx';
 import empresaRepositorio from '../../repositorio/empresaRepositorio.js'
+import { useRouter } from 'next/navigation';
 
 export default function cadastro() {
   const [nome, setNome] = useState();
@@ -11,6 +12,7 @@ export default function cadastro() {
   const [email, setEmail] = useState();
   const [senha, setSenha] = useState();
   const [confirmarSenha, setConfirmarSenha] = useState();
+  const router = useRouter();
 
   const objeto = {
     nomeEmpresa: nomeEmpresa,
@@ -26,6 +28,8 @@ export default function cadastro() {
     empresaRepositorio.criar(objeto)
     .then(() => {
       toast.success("Empresa registrada com sucesso!!!");
+      router.push('/login');
+
     })
     .catch(error => {
       toast.error(error.message)
