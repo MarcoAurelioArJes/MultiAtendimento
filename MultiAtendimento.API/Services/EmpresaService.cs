@@ -46,7 +46,8 @@ namespace MultiAtendimento.API.Services
                 EmpresaCnpj = cadastroEmpresaInput.Cnpj,
                 Email = cadastroEmpresaInput.Email,
                 Cargo = CargoEnum.ADMIN,
-                SetorId = setor.Id
+                SetorId = setor.Id,
+                AdministradorPrincipal = true
             };
             _usuarioRepository.Criar(usuario);
         }

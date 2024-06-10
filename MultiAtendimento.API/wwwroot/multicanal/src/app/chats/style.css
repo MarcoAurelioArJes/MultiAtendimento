@@ -51,7 +51,6 @@
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 10px;
-    max-width: 70%;
     color: #000;
 }
 .message.you {
@@ -93,4 +92,25 @@
 }
 .input-container button:hover {
     background: #0056b3;
+}
+
+.posicaoMensagemMinha {
+    display: flex;
+    justify-content: end;
+}
+
+.posicaoMensagemDele {
+    display: flex;
+    justify-content: start;
+}
+
+.mensagemMinha {
+    background-color: #008CBA;
+    border-radius: 0.75rem 0.75rem 0.1rem 0.75rem;
+}
+
+.mensagemDele {
+    background-color: #fef9c3;
+    color: #1f2937;
+    border-radius: 0.1rem 0.75rem 0.75rem 0.75rem;
 }

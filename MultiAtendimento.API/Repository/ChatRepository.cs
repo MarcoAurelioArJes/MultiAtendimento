@@ -26,8 +26,8 @@ namespace MultiAtendimento.API.Repository
                         .Include(c => c.Mensagens)
                         .Include(c => c.Cliente)
                         .Where(c => cargoEnum == CargoEnum.ADMIN
-                                 || ((c.AtendenteId == null && c.Status == StatusDoChatEnum.Nenhum)
-                                 || (c.AtendenteId == idUsuario && c.Status == StatusDoChatEnum.Atendido && c.SetorId == setorId)));
+                                 || (c.SetorId == setorId && c.AtendenteId == null)
+                                 || (c.AtendenteId == idUsuario));
 
             return chatsPorUsuario.ToList();
         }

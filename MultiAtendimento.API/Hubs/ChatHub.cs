@@ -47,7 +47,7 @@ namespace MultiAtendimento.API.Hubs
                 var token = TokenService.ObterTokenDoClientePorChat(chat);
                 await Clients.Caller.SendAsync("TokenDoCliente", token);
 
-                await Clients.OthersInGroup($"{chat.Setor.Empresa.Cnpj}_{chat.Setor.Nome.Replace(" ", "")}").SendAsync("ChatCriado", chat);
+                await Clients.OthersInGroup($"{chat.Setor.Empresa.Cnpj}_{chat.Setor.Id}").SendAsync("ChatCriado", chat);
             }
             catch (Exception ex)
             {
@@ -63,23 +63,25 @@ namespace MultiAtendimento.API.Hubs
 
                 var empresaCnpj = securityToken.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj")).Value;
                 var chatId = securityToken.Claims.FirstOrDefault(c => c.Type.Equals("chatId")).Value;
+                var clienteId = securityToken.Claims.FirstOrDefault(c => c.Type.Equals("clienteId")).Value;
 
                 int chatIdInt = int.Parse(chatId);
                 var mensagem = new Mensagem
                 {
                     ChatId = chatIdInt,
                     Conteudo = enviarMensagemClienteInput.Conteudo,
-                    EmpresaCnpj = empresaCnpj
+                    EmpresaCnpj = empresaCnpj,
+                    Remetente = CargoEnum.CLIENTE.ToString()
                 };
 
                 _chatService.AdicionarMensagem(mensagem);
 
-                var chat = _chatService.ObterChatPorId(chatIdInt);
 
                 var mensagemView = _mapper.Map<MensagemView>(mensagem);
 
+                var chat = _chatService.ObterChatPorId(chatIdInt);
                 if (chat.AtendenteId is null)
-                    await Clients.OthersInGroup($"{chat.Setor.Empresa.Cnpj}_{chat.Setor.Nome.Replace(" ", "")}").SendAsync("MensagemRecebida", chat);
+                    await Clients.OthersInGroup($"{chat.EmpresaCnpj}_{chat.SetorId}").SendAsync("MensagemRecebida", chat);
                 else 
                     await Clients.OthersInGroup(chatId).SendAsync("MensagemRecebida", mensagemView);
                 
@@ -98,13 +100,16 @@ namespace MultiAtendimento.API.Hubs
         [Authorize]
         public async Task EnviarMensagem(EnviarMensagemInput enviarMensagemInput)
         {
+            var usuarioId = Context.User.Claims.FirstOrDefault(c => c.Type.Equals("id")).Value;
+            var cargo = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role).Value;
             var empresaCnpj = Context.User.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj")).Value;
 
             var mensagem = new Mensagem
             {
                 ChatId = enviarMensagemInput.ChatId,
                 Conteudo = enviarMensagemInput.Conteudo,
-                EmpresaCnpj = empresaCnpj
+                EmpresaCnpj = empresaCnpj,
+                Remetente = cargo
             };
 
             _chatService.AdicionarMensagem(mensagem);
@@ -127,10 +132,8 @@ namespace MultiAtendimento.API.Hubs
             foreach (var chat in chats)
                 await Groups.AddToGroupAsync(Context.ConnectionId, chat.Id.ToString());
 
-            var setor = _setorService.ObterPorId(int.Parse(setorId));
-
             var empresaCnpj = Context.User.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj")).Value;
-            await Groups.AddToGroupAsync(Context.ConnectionId, $"{empresaCnpj}_{setor.Nome.Replace(" ", "")}");
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"{empresaCnpj}_{setorId}");
         }
 
         [Authorize]

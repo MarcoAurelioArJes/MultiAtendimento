@@ -3,6 +3,7 @@
     public enum CargoEnum
     {
         ADMIN,
-        ATENDENTE
+        ATENDENTE,
+        CLIENTE
     }
 }

@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 export default {
     obterConexao() {
         const hubConnectionBuilder = new HubConnectionBuilder()
-               .withUrl("http://localhost:5275/chatHub", { accessTokenFactory: () => Cookies.get("tokenDeAcesso") })
+               .withUrl("http://localhost:9000/chatHub", { accessTokenFactory: () => Cookies.get("tokenDeAcesso") })
                .configureLogging(LogLevel.Information);
         return hubConnectionBuilder.build();
     },

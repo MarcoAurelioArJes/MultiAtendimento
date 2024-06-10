@@ -2,20 +2,19 @@
 import './style.css'
 
 import Navbar from '../../components/navBar/navBar';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ChatList from '../../components/ChatList/page.jsx';
 import chatRepositorio from '../../repositorio/chatRepositorio.js'
 import conexaoWebSocket from '../../services/conexaoWebSocket.js'
 
-const Chats = () => {
-    let chatsContextoGlobal = [];
-    let mensagensAtuaisContextoGlobal = [];
-    let chatAtualContextoGlobal = [];
-
+export default function Chats() {
     const [mensagem, setMensagem] = useState("");
     const [chats, setChats] = useState([]);
+    const chatsRef = useRef();
     const [chatAtual, setChatAtual] = useState(null);
+    const chatAtualRef = useRef();
     const [mensagensAtuais, setMensagensAtuais] = useState(null);
+    const mensagensAtuaisRef = useRef();
     const [conexao, setConexao] = useState();
     
     useEffect(() => {
@@ -26,51 +25,58 @@ const Chats = () => {
             setConexao(conexaoInicial);
             conexaoInicial.invoke("VincularAUmGrupoDeChats");
 
-            definirEventosASeremEscutados(conexaoInicial);
+            definirEventosASeremEscutados.bind(this)(conexaoInicial);
         }
         iniciarConexao();
 
         async function obterChats() {
-            let chats = await chatRepositorio.obterTodos();
-            setChats(chats);
-            
-            if (chatsContextoGlobal.length > 0)
-                chatsContextoGlobal = [];
-
-            chatsContextoGlobal.push(...chats)
+            chatsRef.current = await chatRepositorio.obterTodos();
+            setChats(chatsRef.current);
         }
         obterChats()
     }, [])
 
     const definirEventosASeremEscutados = (conexao) => {
-        conexao.on("MensagemRecebida", handleMensagemRecebida)
-        conexao.on("MensagemEnviada", handleMensagemEnviada)
+        conexao.on("MensagemRecebida", handleMensagemRecebida);
+        conexao.on("MensagemAtualEnviada", handleMensagemAtualEnviada);
 
         conexao.on("ChatCriado", (chat) => {
-            setChats([...chats, chat])
+            let chatExiste = chatsRef.current.some(chatRef => chatRef.id == chat.id)
+            if (chatExiste)
+                return;
+
+            chatsRef.current = [...chatsRef.current, chat]
+            setChats(chatsRef.current)
         })
     }
 
-    const handleMensagemRecebida = (mensagem) => {
-        let indexChatQueRecebeuAMensagem = chatsContextoGlobal.findIndex(chat => chat.id == mensagem.chatId);
-        chatsContextoGlobal[indexChatQueRecebeuAMensagem].mensagens.push(mensagem);
-        setChats(chatsContextoGlobal)
+    const handleAtualizarChatsEMensagens = (mensagemRecebida) => {
+        let indexChatQueRecebeuAMensagem = chatsRef.current.findIndex(chatRef => chatRef.id === mensagemRecebida.chatId);
 
-        let indexMensagensAtuaisContextoGlobal = mensagensAtuaisContextoGlobal.findIndex(mensagemAtual => mensagemAtual.chatId == mensagem.chatId);
-        mensagensAtuaisContextoGlobal[indexMensagensAtuaisContextoGlobal].push(mensagem);
-        setMensagensAtuais(mensagensAtuaisContextoGlobal)
+        if (chatsRef.current[indexChatQueRecebeuAMensagem].mensagens.some(mensagem => mensagem.id == mensagemRecebida.id))
+            return;
 
-        console.log(mensagensAtuaisContextoGlobal)
+        if (chatAtualRef.current.id === mensagemRecebida.chatId) {
+            mensagensAtuaisRef.current = [...mensagensAtuaisRef.current, mensagemRecebida];
+            chatAtualRef.current.mensagens = mensagensAtuaisRef.current;
+            
+            setChatAtual(chatAtualRef.current)
+            setMensagensAtuais(mensagensAtuaisRef.current)
+        }
+        else {
+            chatsRef.current[indexChatQueRecebeuAMensagem].mensagens = [...chatsRef.current[indexChatQueRecebeuAMensagem].mensagens, mensagemRecebida]
+            setChats(chatsRef.current)
+        }
     }
 
-    const handleMensagemEnviada = (mensagem) => {
-        let indexMensagensAtuaisContextoGlobal = mensagensAtuaisContextoGlobal.findIndex(mensagemAtual => mensagemAtual.chatId == mensagem.chatId);
-        mensagensAtuaisContextoGlobal[indexMensagensAtuaisContextoGlobal].push(mensagem);
-        setMensagensAtuais(mensagensAtuaisContextoGlobal)
-
-        console.log(mensagensAtuaisContextoGlobal)
+    const handleMensagemRecebida = (mensagemRecebida) => {
+        handleAtualizarChatsEMensagens(mensagemRecebida);
     }
 
+    const handleMensagemAtualEnviada = (mensagemRecebida) => {
+        handleAtualizarChatsEMensagens(mensagemRecebida);
+    }
+    
     const handleAoDigitarMensagem = (event) => {
         setMensagem(event.target.value)
     };
@@ -80,24 +86,15 @@ const Chats = () => {
             chatId: chatAtual.id,
             conteudo: mensagem
         }
-        console.log("EnviarMensagem", chats)
         conexao.invoke("EnviarMensagem", novaMensagem);
-
-        chatAtual.mensagens.push(novaMensagem)
-        setMensagensAtuais(chatAtual.mensagens)
-        setChatAtual(chatAtual)
-        setMensagem("")
+        setMensagem("");
     };
 
     const handleAoClicarNoChat = (chat) => {
-        setChatAtual(chat);
-        setMensagensAtuais(chat.mensagens);
-        setChats(chats);
-
-        if (mensagensAtuaisContextoGlobal.length > 0)
-            mensagensAtuaisContextoGlobal = [];
-
-        mensagensAtuaisContextoGlobal.push(chat.mensagens)
+        chatAtualRef.current = chat;
+        setChatAtual(chatAtualRef.current);
+        mensagensAtuaisRef.current = chatAtualRef.current.mensagens;
+        setMensagensAtuais(mensagensAtuaisRef.current);
 
         conexao.invoke("VincularAUmChat", chat.id);
     };
@@ -118,13 +115,12 @@ const Chats = () => {
                     {chatAtual && (
                         <>
                             <div className="chat-header">
-                                {chatAtual.clienteId}
+                                {chatAtual.cliente.nome}
                             </div>
                             <div className="messages">
                                 {mensagensAtuais.map((mensagem) => (
-                                    // <div key={mensagem.id} className={`message ${msg.sender === "You" ? "you" : "other"}`}>
-                                    <div key={mensagem.id} className={`message ${mensagem.sender === "You" ? "you" : "other"}`}>
-                                        <p>{mensagem.conteudo}</p>
+                                    <div key={mensagem.id} className={`${mensagem.remetente === "ATENDENTE" ? 'posicaoMensagemMinha' : 'posicaoMensagemDele'}`}>
+                                        <p className={`message ${mensagem.remetente === "ATENDENTE" ? 'mensagemMinha' : 'mensagemDele'}`}>{mensagem.conteudo}</p>
                                     </div>
                                 ))}
                             </div>
@@ -145,5 +141,3 @@ const Chats = () => {
         </div>
     );
 };
-
-export default Chats;

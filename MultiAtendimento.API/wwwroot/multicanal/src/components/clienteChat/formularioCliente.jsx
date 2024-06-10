@@ -3,7 +3,7 @@ import MenuSetor from "../../components/clienteChat/menuSetor";
 import setorRepositorio from '@/repositorio/setorRepositorio';
 import conexaoWebSocket from '../../services/conexaoWebSocket.js'
 
-const CNPJ = "123456789";
+const CNPJ = "12345678901234";
 
 export default function formularioCliente({ setCliente, setChatIniciado, setConexao }) {
 

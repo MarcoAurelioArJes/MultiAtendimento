@@ -9,6 +9,7 @@ namespace MultiAtendimento.API.Models
         public string Email { get; set; }
         public string Senha { get; set; }
         public CargoEnum Cargo { get; set; }
+        public bool AdministradorPrincipal { get; set; }
 
         [ForeignKey(nameof(Setor))]
         public int? SetorId { get; set; }

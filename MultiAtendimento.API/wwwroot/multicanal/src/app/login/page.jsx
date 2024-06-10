@@ -24,8 +24,8 @@ export default function Login() {
       toast.success("Login efetuado com sucesso!!!");
       router.push('/chats');
     })
-    .catch(error => {
-      toast.error(error.message);
+    .catch(erro => {
+      toast.error(erro.message);
     });
   };
 

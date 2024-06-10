@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MultiAtendimento.API.Models;
 using MultiAtendimento.API.Models.DTOs;
+using MultiAtendimento.API.Models.Enums;
 using MultiAtendimento.API.Models.Interfaces;
 using MultiAtendimento.API.Repository;
 using System.Net;
@@ -43,11 +44,12 @@ namespace MultiAtendimento.API.Services
             var usuarioRegister = _usuarioRepository.ObterPorId(id);
             if (usuarioRegister is null)
                 throw new BadHttpRequestException($"Usuário com ID {id} não encontrado", (int)HttpStatusCode.NotFound);
+            if (usuarioRegister.AdministradorPrincipal && usuarioInput.Cargo != CargoEnum.ADMIN)
+                throw new BadHttpRequestException($"Administrador principal não pode ter o cargo alterado", (int)HttpStatusCode.Forbidden);
 
-            usuarioRegister = _mapper.Map<Usuario>(usuarioInput);
-            var setor = _setorService.ObterPorId(usuarioInput.SetorId);
-            usuarioRegister.SetorId = setor.Id;
-            usuarioRegister.EmpresaCnpj = _httpContext.HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj")).Value;
+            usuarioRegister.Nome = usuarioInput.Nome;
+            usuarioRegister.Cargo = usuarioInput.Cargo;
+            usuarioRegister.SetorId = usuarioInput.SetorId;
 
             _usuarioRepository.Atualizar(usuarioRegister);
         }

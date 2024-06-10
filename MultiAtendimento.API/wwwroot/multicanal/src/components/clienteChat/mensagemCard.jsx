@@ -4,7 +4,7 @@ export default function mensagemCard({ mensagem }) {
 
     return (
         <div className={(mensagem.remetente?' justify-end': 'justify-start') + " flex  min-w-full"}>
-             <p className={mensagem.remetente? 'mensagem mensagemMinha' : 'mensagem mensagemDele'}>{mensagem.conteudo}</p>
+             <p className={mensagem.remetente === "ATENDENTE" ? 'mensagem mensagemMinha' : 'mensagem mensagemDele'}>{mensagem.conteudo}</p>
         </div>
     )
 }
