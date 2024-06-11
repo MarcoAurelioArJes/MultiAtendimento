@@ -27,7 +27,7 @@ namespace MultiAtendimento.API.Services
 
         public void Criar(UsuarioInput usuarioInput)
         {
-            LancarExcecaoCasoEmailJaExista(usuarioInput.Email);
+            LancarExcecaoCasoEmailJaExista(usuarioInput.Email, 0);
 
             var usuario = _mapper.Map<Usuario>(usuarioInput);
             
@@ -43,7 +43,7 @@ namespace MultiAtendimento.API.Services
         
         public void CriarUsuarioNoCadastroEmpresa(UsuarioCadastroEmpresaInput usuarioInput)
         {
-            LancarExcecaoCasoEmailJaExista(usuarioInput.Email);
+            LancarExcecaoCasoEmailJaExista(usuarioInput.Email, 0);
 
             var usuario = _mapper.Map<Usuario>(usuarioInput);
             usuario.Senha = HashDeSenhaService.ObterSenhaHash(usuarioInput.Senha);
@@ -53,9 +53,9 @@ namespace MultiAtendimento.API.Services
 
         public void Atualizar(int id, AtualizarUsuarioInput usuarioInput)
         {
-            LancarExcecaoCasoEmailJaExista(usuarioInput.Email);
-
             var usuarioRegister = _usuarioRepository.ObterPorId(id);
+
+            LancarExcecaoCasoEmailJaExista(usuarioInput.Email, usuarioRegister.Id);
             if (usuarioRegister is null)
                 throw new BadHttpRequestException($"Usuário com ID {id} não encontrado", (int)HttpStatusCode.NotFound);
             if (usuarioRegister.AdministradorPrincipal && usuarioInput.Cargo != CargoEnum.ADMIN)
@@ -76,10 +76,10 @@ namespace MultiAtendimento.API.Services
             return usuario;
         }
 
-        public void LancarExcecaoCasoEmailJaExista(string email)
+        public void LancarExcecaoCasoEmailJaExista(string email, int id)
         {
             var usuario = _usuarioRepository.ObterPorEmail(email);
-            if (usuario is not null)
+            if (usuario is not null && usuario.Id != id)
                 throw new BadHttpRequestException($"Email já cadastrado", (int)HttpStatusCode.BadRequest);
         }
 

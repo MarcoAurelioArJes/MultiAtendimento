@@ -21,7 +21,7 @@ namespace MultiAtendimento.API.Services
 
         public void Criar(CadastroEmpresaInput cadastroEmpresaInput)
         {
-            _usuarioService.LancarExcecaoCasoEmailJaExista(cadastroEmpresaInput.Email);
+            _usuarioService.LancarExcecaoCasoEmailJaExista(cadastroEmpresaInput.Email, 0);
 
             var empresaExiste = _empresaRepository.ObterEmpresaPorCnpj(cadastroEmpresaInput.Cnpj) != null;
             if (empresaExiste)
@@ -44,7 +44,7 @@ namespace MultiAtendimento.API.Services
             var usuario = new UsuarioCadastroEmpresaInput
             {
                 Nome = cadastroEmpresaInput.NomeUsuario,
-                Senha = HashDeSenhaService.ObterSenhaHash(cadastroEmpresaInput.Senha),
+                Senha = cadastroEmpresaInput.Senha,
                 EmpresaCnpj = cadastroEmpresaInput.Cnpj,
                 Email = cadastroEmpresaInput.Email,
                 Cargo = CargoEnum.ADMIN,

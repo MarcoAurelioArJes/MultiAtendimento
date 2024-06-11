@@ -33,12 +33,12 @@ export default function cadastro() {
     .catch(erro => {
       let erroJson = JSON.parse(erro.message);
 
-      if (Object.keys(erroJson.resultado).length === 0) {
+      if (erroJson.resultado != undefined && Object.keys(erroJson.resultado).length === 0) {
         toast.error(erroJson.mensagem)
         return;
       }
       erroJson.resultado.forEach(result => {
-        toast.error(result.mensagem, { id: result.campo })
+        toast.error(result.mensagens[0], { id: result.campo })
       });
 
     })

@@ -21,9 +21,9 @@ export default function Login() {
     usuarioRepositorio.entrar(objeto)
     .then((res) => {
       console.log(res)
-      Cookies.set("tokenDeAcesso", res.tokenDeAcesso, { expires: 1});
-      Cookies.set("nomeUsuario", res.nomeUsuario);
-      Cookies.set("cargoUsuario", res.cargoUsuario);
+      Cookies.set("tokenDeAcesso", res.resultado.tokenDeAcesso, { expires: 1 });
+      Cookies.set("nomeUsuario", res.resultado.nomeUsuario);
+      Cookies.set("cargoUsuario", res.resultado.cargoUsuario);
       toast.success("Login efetuado com sucesso!!!");
       router.push('/chats');
     })
@@ -35,7 +35,7 @@ export default function Login() {
         return;
       }
       erroJson.resultado.forEach(result => {
-        toast.error(result.mensagem, { id: result.campo })
+        toast.error(result.mensagens[0], { id: result.campo })
       });
 
     })
