@@ -7,12 +7,12 @@ import conexaoWebSocket from '../../services/conexaoWebSocket.js'
 
 export default function formularioCliente({ setCliente, setChatIniciado, setConexao, cnpj }) {
 
-    const [setores, setSetores] = useState([{id: 0, nome: ""}]);
+    const [setores, setSetores] = useState([{id: 0, nome: "Selecionar"}]);
     const [nome, setNome] = useState("");
     const [setorSelecionado, setSetorSelecionado] = useState(setores[0]);
 
     useEffect(() => {
-        setorRepositorio.obterSetoresPorCnpj(cnpj).then(data => setSetores(data))
+        setorRepositorio.obterSetoresPorCnpj(cnpj).then(data => setSetores(data.resultado))
     }, [])
 
     const pegarNome = (e) => {

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MultiAtendimento.API.Hubs;
+using MultiAtendimento.API.Models.FilterActionPersonalizado;
 using MultiAtendimento.API.Models.Interfaces;
 using MultiAtendimento.API.Repository;
 using MultiAtendimento.API.Repository.BancoDeDados;
@@ -16,7 +17,14 @@ builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<ContextoDoBancoDeDados>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(opcoes =>
+{
+    opcoes.Filters.Add(typeof(VerificacaoPadraoDoModelo));
+})
+.ConfigureApiBehaviorOptions(opcoes =>
+{
+    opcoes.SuppressModelStateInvalidFilter = true;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

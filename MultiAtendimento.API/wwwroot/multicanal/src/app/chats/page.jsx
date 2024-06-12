@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ChatList from '../../components/ChatList/page.jsx';
 import chatRepositorio from '../../repositorio/chatRepositorio.js'
 import conexaoWebSocket from '../../services/conexaoWebSocket.js'
+import toast from 'react-hot-toast';
 
 export default function Chats() {
     const [mensagem, setMensagem] = useState("");
@@ -30,8 +31,21 @@ export default function Chats() {
         iniciarConexao();
 
         async function obterChats() {
-            chatsRef.current = await chatRepositorio.obterTodos();
-            setChats(chatsRef.current);
+            try {
+                let retorno = await chatRepositorio.obterTodos();
+                chatsRef.current = retorno.resultado;
+                setChats(chatsRef.current);
+            } catch(erro) {
+                let erroJson = JSON.parse(erro.message);
+          
+                if (Object.keys(erroJson.resultado).length === 0) {
+                  toast.error(erroJson.mensagem)
+                  return;
+                }
+                erroJson.resultado.forEach(result => {
+                  toast.error(result.mensagens[0], { id: result.campo })
+                });
+            }
         }
         obterChats()
     }, [])

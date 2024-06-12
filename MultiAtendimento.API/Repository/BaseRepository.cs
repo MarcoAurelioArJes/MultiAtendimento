@@ -16,10 +16,12 @@ namespace MultiAtendimento.API.Repository
             _dbSet = _contextoDoBancoDeDados.Set<T>();
         }
 
-        public void Criar(T objeto)
+        public T Criar(T objeto)
         {
             _dbSet.Add(objeto);
             _contextoDoBancoDeDados.SaveChanges();
+
+            return objeto;
         }
 
         public T Atualizar(T objeto)

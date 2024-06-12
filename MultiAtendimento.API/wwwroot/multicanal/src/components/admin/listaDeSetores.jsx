@@ -24,21 +24,20 @@ export default function ListaDeSetores() {
     const [dialogMode, setDialogMode] = useState('update');
 
     useEffect(() => {
-        setorRepositorio.obterSetores().then(data => setSetores(data))
+        setorRepositorio.obterSetores().then(data => setSetores(data.resultado))
     },[])
 
     const handleDeleteButtonClick = (entity) => {
-        setSetorSelecionado(entity);
-        setShowDeleteDialog(true);
+
     };
 
-    const handleAoClicarEmEditarUsuario = (usuario) => {
+    const handleAoClicarEmEditarSetor = (usuario) => {
         setSetorSelecionado(usuario);
         setDialogMode('atualizar');
         setMostrarAtualizarDialog(true);
     };
 
-    const handleAoClicarEmNovoUsuario = () => {
+    const handleAoClicarEmNovoSetor = () => {
         setSetorSelecionado(null);
         setDialogMode('criar');
         setMostrarAtualizarDialog(true);
@@ -67,7 +66,7 @@ export default function ListaDeSetores() {
                             <div className="flex gap-x-4">
                                 <button
                                     className="flex items-center px-2 py-1 bg-green-500 text-white text-sm font-medium rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                    onClick={() => handleAoClicarEmEditarUsuario(setor)}
+                                    onClick={() => handleAoClicarEmEditarSetor(setor)}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 012.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zM19.5 7.125L18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -90,7 +89,7 @@ export default function ListaDeSetores() {
                         <div className="flex gap-x-4">
                             <button
                                 className="flex items-center px-2 py-1 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                                onClick={handleAoClicarEmNovoUsuario}
+                                onClick={handleAoClicarEmNovoSetor}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

@@ -27,6 +27,8 @@ namespace MultiAtendimento.API.Services
 
         public void Criar(UsuarioInput usuarioInput)
         {
+            LancarExcecaoCasoEmailJaExista(usuarioInput.Email, 0);
+
             var usuario = _mapper.Map<Usuario>(usuarioInput);
             
             var cnpjEmpresa = _httpContext.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "empresaCnpj")?.Value;
@@ -38,10 +40,22 @@ namespace MultiAtendimento.API.Services
             usuario.Senha = HashDeSenhaService.ObterSenhaHash(usuarioInput.Senha);
             _usuarioRepository.Criar(usuario);
         }
+        
+        public void CriarUsuarioNoCadastroEmpresa(UsuarioCadastroEmpresaInput usuarioInput)
+        {
+            LancarExcecaoCasoEmailJaExista(usuarioInput.Email, 0);
+
+            var usuario = _mapper.Map<Usuario>(usuarioInput);
+            usuario.Senha = HashDeSenhaService.ObterSenhaHash(usuarioInput.Senha);
+
+            _usuarioRepository.Criar(usuario);
+        }
 
         public void Atualizar(int id, AtualizarUsuarioInput usuarioInput)
         {
             var usuarioRegister = _usuarioRepository.ObterPorId(id);
+
+            LancarExcecaoCasoEmailJaExista(usuarioInput.Email, usuarioRegister.Id);
             if (usuarioRegister is null)
                 throw new BadHttpRequestException($"Usuário com ID {id} não encontrado", (int)HttpStatusCode.NotFound);
             if (usuarioRegister.AdministradorPrincipal && usuarioInput.Cargo != CargoEnum.ADMIN)
@@ -60,6 +74,13 @@ namespace MultiAtendimento.API.Services
             if (usuario is null)
                 throw new BadHttpRequestException($"Usuário com ID {id} não encontrado", (int)HttpStatusCode.NotFound);
             return usuario;
+        }
+
+        public void LancarExcecaoCasoEmailJaExista(string email, int id)
+        {
+            var usuario = _usuarioRepository.ObterPorEmail(email);
+            if (usuario is not null && usuario.Id != id)
+                throw new BadHttpRequestException($"Email já cadastrado", (int)HttpStatusCode.BadRequest);
         }
 
         public Usuario ObterPorEmail(string email)

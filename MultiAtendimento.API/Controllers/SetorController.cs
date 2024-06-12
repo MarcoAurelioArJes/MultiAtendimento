@@ -2,6 +2,8 @@
 using MultiAtendimento.API.Services;
 using MultiAtendimento.API.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using System.Net;
+using MultiAtendimento.API.Models;
 
 namespace MultiAtendimento.API.Controllers
 {
@@ -24,9 +26,19 @@ namespace MultiAtendimento.API.Controllers
                 _setorService.Criar(setorInput);
                 return Created();
             }
+            catch (BadHttpRequestException badHttpRequestException)
+            {
+                return StatusCode(badHttpRequestException.StatusCode, new RetornoPadraoView<object>
+                {
+                    Mensagem = badHttpRequestException.Message
+                });
+            }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode((int)HttpStatusCode.BadRequest, new RetornoPadraoView<object>
+                {
+                    Mensagem = ex.Message
+                });
             }
         }
 
@@ -40,9 +52,19 @@ namespace MultiAtendimento.API.Controllers
                 _setorService.Atualizar(idInteiro, setorInput);
                 return Created();
             }
+            catch (BadHttpRequestException badHttpRequestException)
+            {
+                return StatusCode(badHttpRequestException.StatusCode, new RetornoPadraoView<object>
+                {
+                    Mensagem = badHttpRequestException.Message
+                });
+            }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode((int)HttpStatusCode.BadRequest, new RetornoPadraoView<object>
+                {
+                    Mensagem = ex.Message
+                });
             }
         }
 
@@ -52,11 +74,25 @@ namespace MultiAtendimento.API.Controllers
             try
             {
                 var setores = _setorService.ObterTodosOsSetores();
-                return Ok(setores);
+                return Ok(new RetornoPadraoView<List<Setor>>
+                {
+                    Mensagem = "Lista de setores obtidas com sucesso!",
+                    Resultado = setores
+                });
+            }
+            catch (BadHttpRequestException badHttpRequestException)
+            {
+                return StatusCode(badHttpRequestException.StatusCode, new RetornoPadraoView<object>
+                {
+                    Mensagem = badHttpRequestException.Message
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode((int)HttpStatusCode.BadRequest, new RetornoPadraoView<object>
+                {
+                    Mensagem = ex.Message
+                });
             }
         }
 
@@ -67,11 +103,25 @@ namespace MultiAtendimento.API.Controllers
             try
             {
                 var setores = _setorService.ObterSetoresPorCnpj(cnpj);
-                return Ok(setores);
+                return Ok(new RetornoPadraoView<List<Setor>>
+                {
+                    Mensagem = "Lista de setores obtidas com sucesso!",
+                    Resultado = setores
+                });
+            }
+            catch (BadHttpRequestException badHttpRequestException)
+            {
+                return StatusCode(badHttpRequestException.StatusCode, new RetornoPadraoView<object>
+                {
+                    Mensagem = badHttpRequestException.Message
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode((int)HttpStatusCode.BadRequest, new RetornoPadraoView<object>
+                {
+                    Mensagem = ex.Message
+                });
             }
         }
     }

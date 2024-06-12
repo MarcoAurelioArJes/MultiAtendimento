@@ -7,10 +7,8 @@ export default {
 
         let resultado = await apiService.resposta(respostaHttp);
 
-        if (!respostaHttp.ok) {
-        validaCampos.defineCampoDeErroDaApi.bind(this)({nomePropriedade: resultado.value.nomePropriedade, 
-            mensagem: resultado.value.mensagemErro});
-        }
+        if (!respostaHttp.ok) 
+            throw new Error(JSON.stringify(resultado))
     },
     async obterSetores() {
         let respostaHttp = await apiService.requisicao({endpoint: `${baseEndpoint}/obterSetores`, verboHttp: "GET"})

@@ -17,7 +17,8 @@ export default function CriarEAtualizarDialog({ aoFechar, usuario, atualizarUsua
 
   useEffect(() => {
     async function obterSetores() {
-      let setores = await setorRepositorio.obterSetores();
+      let resultadoSetor = await setorRepositorio.obterSetores();
+      let setores = resultadoSetor.resultado;
       setSetores(setores)
       setSetorSelecionado(mode === 'atualizar' ? setores.find(setor => setor.id === usuario.setorId) : setores[0]);
     }

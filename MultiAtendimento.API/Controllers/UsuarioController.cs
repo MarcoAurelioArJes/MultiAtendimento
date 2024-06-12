@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using MultiAtendimento.API.Models;
 using MultiAtendimento.API.Services;
 using MultiAtendimento.API.Models.DTOs;
@@ -25,9 +26,19 @@ namespace MultiAtendimento.API.Controllers
                 _usuarioService.Criar(usuarioInput);
                 return Created();
             }
+            catch (BadHttpRequestException badHttpRequestException)
+            {
+                return StatusCode(badHttpRequestException.StatusCode, new RetornoPadraoView<object>
+                {
+                    Mensagem = badHttpRequestException.Message
+                });
+            }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode((int)HttpStatusCode.BadRequest, new RetornoPadraoView<object>
+                {
+                    Mensagem = ex.Message
+                });
             }
         }
 
@@ -38,15 +49,25 @@ namespace MultiAtendimento.API.Controllers
             try
             {
                 var retorno = _usuarioService.Entrar(entrarInput);
-                return Ok(retorno);
+                return Ok(new RetornoPadraoView<EntrarView>
+                {
+                    Mensagem = "Login efetuado com sucesso!",
+                    Resultado = retorno
+                });
             }
-            catch (BadHttpRequestException ex)
+            catch (BadHttpRequestException badHttpRequestException)
             {
-                return StatusCode(ex.StatusCode, new { mensagemDeErro = ex.Message });
+                return StatusCode(badHttpRequestException.StatusCode, new RetornoPadraoView<object>
+                {
+                    Mensagem = badHttpRequestException.Message
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { mensagemDeErro = ex.Message });
+                return StatusCode((int)HttpStatusCode.BadRequest, new RetornoPadraoView<object>
+                {
+                    Mensagem = ex.Message
+                });
             }
         }
 
@@ -59,9 +80,19 @@ namespace MultiAtendimento.API.Controllers
                 _usuarioService.Atualizar(idInteiro, usuarioInput);
                 return NoContent();
             }
+            catch (BadHttpRequestException badHttpRequestException)
+            {
+                return StatusCode(badHttpRequestException.StatusCode, new RetornoPadraoView<object>
+                {
+                    Mensagem = badHttpRequestException.Message
+                });
+            }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode((int)HttpStatusCode.BadRequest, new RetornoPadraoView<object>
+                {
+                    Mensagem = ex.Message
+                });
             }
         }
 
@@ -73,11 +104,25 @@ namespace MultiAtendimento.API.Controllers
             {
                 var idInteiro = int.TryParse(id, out int resultado) ? resultado : throw new ArgumentException("Necessário informar no parâmetro da URL um número", nameof(id));
                 var usuario = _usuarioService.ObterPorId(idInteiro);
-                return Ok(usuario);
+                return Ok(new RetornoPadraoView<Usuario>
+                {
+                    Mensagem = "Usuário obtido com sucesso!",
+                    Resultado = usuario
+                });
+            }
+            catch (BadHttpRequestException badHttpRequestException)
+            {
+                return StatusCode(badHttpRequestException.StatusCode, new RetornoPadraoView<object>
+                {
+                    Mensagem = badHttpRequestException.Message
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode((int)HttpStatusCode.BadRequest, new RetornoPadraoView<object>
+                {
+                    Mensagem = ex.Message
+                });
             }
         }
 
@@ -88,11 +133,25 @@ namespace MultiAtendimento.API.Controllers
             {
                 var cnpj = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("empresaCnpj")).Value;
                 var usuarios = _usuarioService.ObterTodosOsUsuariosPorCnpjDaEmpresa(cnpj);
-                return Ok(usuarios);
+                return Ok(new RetornoPadraoView<List<Usuario>>
+                {
+                    Mensagem = "Lista chats de usuário obtidas com sucesso!",
+                    Resultado = usuarios
+                });
+            }
+            catch (BadHttpRequestException badHttpRequestException)
+            {
+                return StatusCode(badHttpRequestException.StatusCode, new RetornoPadraoView<object>
+                {
+                    Mensagem = badHttpRequestException.Message
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode((int)HttpStatusCode.BadRequest, new RetornoPadraoView<object>
+                {
+                    Mensagem = ex.Message
+                });
             }
         }
     }

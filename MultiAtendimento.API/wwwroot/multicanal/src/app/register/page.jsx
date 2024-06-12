@@ -29,10 +29,18 @@ export default function cadastro() {
     .then(() => {
       toast.success("Empresa registrada com sucesso!!!");
       router.push('/login');
-
     })
-    .catch(error => {
-      toast.error(error.message)
+    .catch(erro => {
+      let erroJson = JSON.parse(erro.message);
+
+      if (erroJson.resultado != undefined && Object.keys(erroJson.resultado).length === 0) {
+        toast.error(erroJson.mensagem)
+        return;
+      }
+      erroJson.resultado.forEach(result => {
+        toast.error(result.mensagens[0], { id: result.campo })
+      });
+
     })
   }
 
